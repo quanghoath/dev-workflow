@@ -298,7 +298,7 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
       return `<article class="row s-${esc(f.status)}">
         <button class="row-head" type="button" data-id="${esc(f._id)}" aria-expanded="${open}">
           <div style="min-width:0">
-            <div class="title-line"><span class="proj">${esc(proj && proj.name ? proj.name : f.project)}</span><span class="ftitle">${esc(f.title || f.slug || f._id)}</span></div>
+            <div class="title-line"><span class="proj">${esc(proj && proj.name ? proj.name : f.project)}</span><span class="ftitle">${esc(f.title || f.slug || f._id)}</span>${f.mode === "quick" ? `<span class="tag" title="Chế độ nhanh: spec/plan trong chat, bỏ P5">nhanh</span>` : ""}</div>
             <div class="summary-line">${esc(f.summary || "")}</div>
           </div>
           <div class="right"><span class="pill p-${esc(f.status)}">${esc(STATUS[f.status] || f.status || "—")}</span><span class="when" title="${esc(f.updatedAt)}">${esc(ago(f.updatedAt))}</span></div>

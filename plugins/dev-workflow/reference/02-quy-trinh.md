@@ -2,6 +2,30 @@
 
 Mỗi bước gồm: **mục tiêu**, **skill**, **đầu ra**, **điều kiện qua bước**, **cập nhật dashboard**. Không qua bước khi điều kiện chưa đạt. ◆ = phải có người duyệt.
 
+## Chọn chế độ: đầy đủ hay nhanh
+
+Trước P1, chọn một trong hai chế độ và ghi vào `status.json` (`mode`):
+
+| | **Đầy đủ** (`full`, mặc định) | **Nhanh** (`quick`) |
+|---|---|---|
+| Dùng cho | tính năng mới, đổi API/schema, có rủi ro race/tải/bảo mật | sửa lỗi nhỏ, chỉnh UI/text, refactor nhỏ |
+| Điều kiện | — | **cả 4:** sửa ≤ khoảng 3 file code · không đổi schema DB hay hợp đồng API · không có rủi ro race/tải/bảo mật · người dùng đồng ý dùng chế độ nhanh |
+| Spec / plan | file spec + plan + TEST-PLAN | **trong chat**: mục tiêu, 1–3 AC, file sẽ sửa, cách kiểm tra (một lần duyệt) |
+| Build | P3 đầy đủ | TDD: test tái hiện/đặc tả → sửa → build + unit test xanh |
+| Kiểm tra | P4 + P5 | chỉ P4 cho các AC liên quan (FE: Chrome DevTools MCP; BE: gọi API) |
+| Tổng kết | REPORT.md đầy đủ ◆ | mục "Báo cáo nhanh" trong `REPORT.md` |
+
+**Một chiều:** đang ở chế độ nhanh mà phát hiện độ phức tạp ẩn (phải sửa nhiều file hơn, đụng schema/API, thấy rủi ro race…) thì **dừng, báo người dùng và chuyển sang đầy đủ** từ P1. Không chuyển ngược từ đầy đủ sang nhanh.
+
+Chế độ nhanh vẫn tạo `runs/<slug>/status.json` và `REPORT.md`, vẫn cập nhật dashboard, vẫn giới hạn 3 vòng sửa cho mỗi bug.
+
+## Trạng thái cục bộ: `runs/<slug>/status.json`
+
+Mỗi tính năng có một file `docs/superpowers/runs/<slug>/status.json`, cùng cấu trúc với document `features` trong [03-dashboard.md](03-dashboard.md). File này là **nguồn sự thật**; dashboard chỉ là bản sao để xem.
+
+- Mỗi lần chuyển bước, đến cổng, mở/đóng bug, hoặc dừng: cập nhật `status.json` **trước**, commit cùng thay đổi liên quan, rồi mới đồng bộ lên dashboard (nếu có).
+- Phiên mới hoặc máy khác: đọc `status.json` để biết đang ở đâu (`/dev-workflow:status`), không cần dashboard.
+
 ---
 
 ## P0 · Khởi tạo dự án (1 lần)
@@ -23,7 +47,7 @@ Mỗi bước gồm: **mục tiêu**, **skill**, **đầu ra**, **điều kiện
   - **Rủi ro & hardening:** đánh dấu có hoặc không cho từng loại: race condition, tải cao, hiệu năng FE, bảo mật/phân quyền, dữ liệu lớn. Mỗi rủi ro được đánh "có" phải có kịch bản `R-n` và ngưỡng.
   - FULLSTACK thêm mục **Hợp đồng API**.
 - **Qua bước khi:** người duyệt đồng ý spec.
-- **Dashboard:** `phase=P1`, `status=waiting_review` khi chờ duyệt; ghi `gates.spec` khi được duyệt.
+- **Trạng thái:** tạo `runs/<slug>/status.json` (`mode`, `phase=P1`); `status=waiting_review` khi chờ duyệt; ghi `gates.spec` khi được duyệt.
 
 ## P2 · Plan + Test plan ◆
 

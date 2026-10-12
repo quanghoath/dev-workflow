@@ -1,0 +1,21 @@
+{
+  "project": "<project>",
+  "slug": "<slug>",
+  "title": "<tên tính năng>",
+  "mode": "full",
+  "phase": "P1",
+  "status": "in_progress",
+  "summary": "Đang viết spec",
+  "specPath": null,
+  "planPath": null,
+  "branch": null,
+  "gates": { "spec": null, "plan": null, "report": null },
+  "tasks": [],
+  "tests": {},
+  "bugs": [],
+  "loops": 0,
+  "blockedReason": null,
+  "report": null,
+  "log": [],
+  "updatedAt": "<ISO 8601, ví dụ 2026-10-12T09:30:00+07:00>"
+}

@@ -13,7 +13,7 @@ P5 Hardening    race conditions · load (k6) · Lighthouse       ─┘ max 3 ro
 P6 Report       verification + code review + REPORT.md                    ◆ you approve
 ```
 
-Optional: a live status board on claude.ai showing every feature's step, tests and bugs.
+Small fix? **Quick mode** keeps TDD and UI/API checks but puts the spec and plan in chat. `/dev-workflow:status` shows where every feature stands. Optional: a live status board on claude.ai. See a full [example run](examples/README.md).
 
 ⭐ If this helps you, star the repo so others can find it. Issues and ideas are welcome.
 
@@ -35,7 +35,10 @@ Nếu lệnh đầu không tìm thấy superpowers, dùng `/plugin marketplace a
 
 1. Mở repo dự án, gõ `/dev-workflow:init`. Claude tự nhận diện dự án FE/BE/fullstack, ghi lệnh build/test, hỏi bạn có dùng dashboard không.
 2. Commit các file Claude vừa tạo. Dev khác clone repo về, bấm **Trust** là có plugin, không cần cài.
-3. Làm tính năng: *"làm tính năng X theo dev-workflow"* hoặc `/dev-workflow:run <mô tả>`.
+3. Làm tính năng: *"làm tính năng X theo dev-workflow"* hoặc `/dev-workflow:run <mô tả>`. Việc nhỏ (sửa lỗi nhỏ, chỉnh UI) Claude sẽ đề xuất **chế độ nhanh**: spec và plan ngắn ngay trong chat, vẫn TDD và kiểm tra UI/API.
+4. Xem tiến độ hoặc tiếp tục việc dở ở phiên mới: `/dev-workflow:status`.
+
+Muốn xem đầu ra trông thế nào trước khi cài: [ví dụ chạy mẫu](examples/README.md).
 
 ## Dashboard (tuỳ chọn)
 

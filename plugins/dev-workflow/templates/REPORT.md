@@ -42,3 +42,21 @@ Tổng số lần quay về P3: N.
 ## Hướng dẫn kiểm tra lại cho người duyệt
 
 1. …
+
+---
+
+<!-- Chế độ nhanh: chỉ dùng phần dưới đây, xoá các mục phía trên. -->
+
+# Báo cáo nhanh · <tên việc>
+
+- Slug: `<slug>` · Branch: `<branch>` · Ngày: YYYY-MM-DD · Chế độ: quick
+- Mục tiêu: <1 câu>
+
+| AC | Mô tả | Kiểm bằng | Kết quả |
+|---|---|---|---|
+| AC-1 | … | unit `<tên test>` + UI/API `<kịch bản>` | pass |
+
+- File đã sửa: `<file>` — …
+- Unit test: N pass / 0 fail · Build: xanh
+- Bug trong lúc làm: không / BUG-001 (fixed, 1 vòng)
+- Còn lại / lưu ý: …

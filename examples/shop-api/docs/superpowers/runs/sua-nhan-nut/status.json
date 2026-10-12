@@ -1,0 +1,29 @@
+{
+  "project": "shop-api",
+  "slug": "sua-nhan-nut",
+  "title": "Sửa chữ trên nút Đặt hàng",
+  "mode": "quick",
+  "phase": "P6",
+  "status": "done",
+  "summary": "Xong: 2/2 AC, không có bug",
+  "specPath": null,
+  "planPath": null,
+  "branch": "fix/sua-nhan-nut",
+  "gates": { "spec": "2026-10-12T16:00:00+07:00", "plan": null, "report": null },
+  "tasks": [
+    { "id": "Q1", "title": "Nút hiện số lượng + khoá khi giỏ rỗng", "tag": "FE", "status": "done" }
+  ],
+  "tests": {
+    "unit": { "pass": 39, "fail": 0 },
+    "p4": { "pass": 2, "fail": 0, "warn": 0, "total": 2 }
+  },
+  "bugs": [],
+  "loops": 0,
+  "blockedReason": null,
+  "report": "2/2 AC đạt, sửa 2 file, không có bug.",
+  "log": [
+    { "at": "2026-10-12T16:25:00+07:00", "phase": "P6", "kind": "phase", "text": "Báo cáo nhanh xong" },
+    { "at": "2026-10-12T16:00:00+07:00", "phase": "P1", "kind": "gate", "text": "Người dùng đồng ý làm chế độ nhanh" }
+  ],
+  "updatedAt": "2026-10-12T16:25:00+07:00"
+}

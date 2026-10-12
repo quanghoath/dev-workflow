@@ -49,6 +49,7 @@ Hai collection:
 {
   "project": "shop-api",
   "slug": "dat-hang",
+  "mode": "full",                // full | quick (xem 02-quy-trinh.md)
   "title": "Đặt hàng và trừ tồn kho",
   "phase": "P3",                 // P1..P6
   "status": "in_progress",       // xem bảng trạng thái
@@ -117,11 +118,13 @@ Tối thiểu: mỗi lần chuyển bước và mỗi lần dừng. Không cập
 
 Dùng tool `ArtifactData` với `url` = `dashboard_url`.
 
-1. **Tính năng mới:** `set` vào `collection: "features"`, `doc_id: "<project>--<slug>"` (chưa tồn tại nên không cần `if_version`).
-2. **Cập nhật:** `get` document đó để lấy `version` và giá trị hiện tại, rồi `update` kèm `if_version`.
-   - Object lồng nhau (`tests`, `gates`) được merge; **mảng (`tasks`, `bugs`, `log`, `tests.p5`) bị thay nguyên**, nên phải gửi lại cả mảng đã sửa. Với `log`: thêm mục mới rồi cắt còn 50 mục.
+Nguồn dữ liệu là file `docs/superpowers/runs/<slug>/status.json` trong repo (cùng cấu trúc với document trên). Luôn cập nhật file này trước, rồi đồng bộ nguyên file lên dashboard:
+
+1. **Tính năng mới:** `set` với `collection: "features"`, `doc_id: "<project>--<slug>"`, `file_path` = đường dẫn `status.json` (chưa tồn tại nên không cần `if_version`).
+2. **Cập nhật:** `get` document đó để lấy `version`, rồi `set` với `file_path` = `status.json` và `if_version` = version vừa đọc.
+   - Với `log`: thêm mục mới vào `status.json` rồi cắt còn 50 mục trước khi đồng bộ.
 3. Bị từ chối vì version đã đổi: `get` lại rồi ghi lại. Không ghi đè mù.
-4. Bị từ chối vì quyền: báo người dùng tài khoản này cần quyền **Editor** trên dashboard, rồi tiếp tục công việc.
+4. Bị từ chối vì quyền (với Editor ngoài tổ chức claude.ai thì lỗi này luôn xảy ra): báo người dùng một lần trong phiên, rồi tiếp tục công việc. `status.json` vẫn đầy đủ.
 5. `projects/<project>`: tạo ở P0 (`dev-workflow:init`), cập nhật khi hồ sơ hoặc stack đổi.
 
 Chỉ đưa vào dashboard tóm tắt và số liệu. Nội dung chi tiết (spec, bug, bằng chứng) nằm trong repo, dashboard chỉ ghi đường dẫn. **Không ghi secret, token, connection string hay dữ liệu khách hàng thật.**

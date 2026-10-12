@@ -13,9 +13,15 @@ Bắt buộc đọc trước khi bắt đầu:
 - `${CLAUDE_PLUGIN_ROOT}/reference/04-quy-trinh-test.md`: P3–P6.
 - `${CLAUDE_PLUGIN_ROOT}/reference/03-dashboard.md`: mỗi lần cập nhật dashboard.
 - `${CLAUDE_PLUGIN_ROOT}/reference/01-ho-so-du-an.md`: công cụ test và ngưỡng mặc định.
-- Mẫu: `${CLAUDE_PLUGIN_ROOT}/templates/` (`spec-addendum.md`, `TEST-PLAN.md`, `BUG.md`, `REPORT.md`).
+- Mẫu: `${CLAUDE_PLUGIN_ROOT}/templates/` (`status.json`, `spec-addendum.md`, `TEST-PLAN.md`, `BUG.md`, `REPORT.md` — có mục "Báo cáo nhanh").
 
-## Luồng
+## Chọn chế độ trước P1
+
+- **Nhanh (`quick`)** chỉ khi đủ cả 4 điều kiện trong `02-quy-trinh.md` (≤ khoảng 3 file, không đổi schema/API, không rủi ro race/tải/bảo mật, người dùng đồng ý). Đề xuất chế độ nhanh bằng một câu hỏi khi thấy việc nhỏ; người dùng nói "nhanh"/"quick" thì vẫn phải kiểm 4 điều kiện.
+- Còn lại: **đầy đủ (`full`)**.
+- Chế độ nhanh: spec + plan ngắn trong chat (mục tiêu, 1–3 AC, file sẽ sửa, cách kiểm tra) → một lần duyệt → TDD → P4 cho các AC liên quan → mục "Báo cáo nhanh" trong `REPORT.md`. Phát hiện phức tạp ẩn thì dừng, báo, chuyển sang đầy đủ.
+
+## Luồng đầy đủ
 
 | Bước | Skill superpowers | Đầu ra | Cổng |
 |---|---|---|---|
@@ -31,11 +37,11 @@ Vòng phản hồi: `BUG-NNN.md` → `systematic-debugging` → test tái hiện
 ## Quy tắc không được vi phạm
 
 0. Kiểm tra skill `superpowers:brainstorming` có sẵn. Nếu không có, dừng lại và hướng dẫn cài: `/plugin install superpowers@claude-plugins-official` (hoặc `/plugin marketplace add obra/superpowers-marketplace` rồi `/plugin install superpowers@superpowers-marketplace`).
-1. Tạo todo cho P1–P6 ngay khi bắt đầu; tính năng đang dở thì tiếp tục từ bước chưa xong (xem dashboard và thư mục `runs/<slug>/`).
+1. Tạo todo cho các bước của chế độ đã chọn ngay khi bắt đầu. Tính năng đang dở thì đọc `docs/superpowers/runs/<slug>/status.json` và tiếp tục từ bước chưa xong.
 2. Không vượt cổng ◆ khi chưa có câu trả lời đồng ý của người dùng cho đúng tài liệu đó.
 3. Kịch bản test (TEST-PLAN) viết ở P2, trước khi code.
 4. Không kết luận `pass` khi chưa thấy output thật.
 5. Không chạy P4/P5 trên môi trường `forbidden` trong config (mặc định là prod).
-6. **Cập nhật dashboard** (`url` = `dashboard_url` trong config) mỗi lần chuyển bước, đến cổng, mở hoặc đóng bug, và khi dừng (`ArtifactData`: `get` → `update` với `if_version`). Nếu `dashboard_url: none` thì bỏ qua mọi bước dashboard. Nếu thiếu hoặc trống, hỏi người dùng một lần (dán link / tạo mới / không dùng) theo `03-dashboard.md` và ghi lại vào config. Ghi dashboard thất bại thì báo một lần rồi tiếp tục công việc; không được bỏ việc vì dashboard.
+6. **Cập nhật trạng thái** mỗi lần chuyển bước, đến cổng, mở hoặc đóng bug, và khi dừng: sửa `runs/<slug>/status.json` trước (JSON hợp lệ, không comment), rồi đồng bộ lên dashboard (`url` = `dashboard_url` trong config) theo `03-dashboard.md`. Nếu `dashboard_url: none` thì bỏ qua mọi bước dashboard. Nếu thiếu hoặc trống, hỏi người dùng một lần (dán link / tạo mới / không dùng) theo `03-dashboard.md` và ghi lại vào config. Ghi dashboard thất bại thì báo một lần rồi tiếp tục công việc; không được bỏ việc vì dashboard.
 7. FULLSTACK: `[CONTRACT]` → `[BE]` → API e2e pass → `[FE]`.
 8. Tài liệu tham chiếu viết bằng tiếng Việt, nhưng trao đổi và viết spec, plan, report bằng ngôn ngữ người dùng đang dùng.
