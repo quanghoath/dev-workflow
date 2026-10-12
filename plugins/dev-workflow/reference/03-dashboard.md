@@ -1,10 +1,27 @@
 # 03 · Dashboard trạng thái
 
-Một trang dashboard duy nhất trên claude.ai cho **mọi dự án**. Trang chỉ hiển thị; Claude là bên ghi dữ liệu qua tool `ArtifactData`. Người xem cần link và quyền xem.
+Dashboard là một trang trên claude.ai. Trang chỉ hiển thị; Claude là bên ghi dữ liệu qua tool `ArtifactData`. Một dashboard dùng được cho nhiều dự án: mỗi team thường dùng chung một trang.
 
-- **URL dashboard:** https://claude.ai/artifact/JxMFAyhzfHEk5nMrwo1SgU. Đây là giá trị mặc định; `dashboard_url` trong `workflow-config.md` có thể đổi sang dashboard khác.
-- Quyền: mọi người được chia sẻ đều đọc được. Chỉ **Owner/Editor** ghi được (rule `write: admin`). Tài khoản Claude trên máy nào cần ghi trạng thái thì phải được chia sẻ quyền **Editor**; Viewer và Contributor chỉ xem được.
-- Mã nguồn trang: `dashboard/index.html` trong repo plugin. Publish lại vào đúng URL trên, không tạo trang mới.
+- **URL:** lấy từ `dashboard_url` trong `docs/workflow-config.md` của dự án. Plugin không có URL mặc định.
+  - `dashboard_url: none` → bỏ mọi bước cập nhật dashboard; quy trình vẫn chạy đủ.
+  - Thiếu hoặc trống → chạy `dev-workflow:init` để chọn (xem mục "Chọn hoặc tạo dashboard").
+- **Quyền:** mọi người được chia sẻ đều đọc được. Chỉ **Owner/Editor** ghi được (rule `write: admin`). Tài khoản claude.ai trên máy nào cần ghi trạng thái thì phải được chia sẻ quyền **Editor**; Viewer và Contributor chỉ xem được. Không bật link public: người vào bằng link chỉ xem, và khi bật link thì các Editor ngoài tổ chức mất quyền ghi.
+- **Mã nguồn trang:** `${CLAUDE_PLUGIN_ROOT}/dashboard/index.html`.
+
+## Chọn hoặc tạo dashboard (ở P0)
+
+Hỏi người dùng một câu, ba lựa chọn:
+
+1. **Dùng dashboard có sẵn:** người dùng dán link `https://claude.ai/artifact/...`. Kiểm tra bằng `ArtifactData list` collection `projects` (đọc được là link đúng). Nếu bước ghi `projects/<project>` sau đó bị từ chối, báo người dùng cần xin quyền Editor từ chủ dashboard.
+2. **Tạo dashboard mới** (thuộc tài khoản claude.ai đang dùng):
+   1. Copy `${CLAUDE_PLUGIN_ROOT}/dashboard/index.html` vào thư mục scratchpad của phiên (tool Artifact chỉ publish file trong thư mục làm việc hoặc scratchpad).
+   2. Publish bằng tool `Artifact`: `file_path` = bản copy, `icon: "kanban"`, `description: "Trạng thái các tính năng theo quy trình dev-workflow P1–P6"`, `capabilities: {"db": {"rules": [{"path": "", "read": "view", "write": "admin"}]}}`.
+   3. Ghi URL trả về vào `dashboard_url`. Nhắc người dùng share trang cho team với quyền Editor (không bật link public).
+3. **Không dùng dashboard:** ghi `dashboard_url: none`.
+
+Không có tool `Artifact` / `ArtifactData` (ví dụ chưa đăng nhập claude.ai) thì chỉ còn lựa chọn 3, kèm ghi chú để bật sau.
+
+**Cập nhật giao diện dashboard đã có:** publish lại bản `index.html` mới bằng tool `Artifact` với `url` = `dashboard_url` (đọc trang trước theo yêu cầu của tool). **Không** truyền `capabilities` để giữ rule cũ. Dữ liệu được giữ nguyên qua các lần publish. Không publish thành trang mới.
 
 ## Dữ liệu
 

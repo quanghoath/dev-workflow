@@ -8,7 +8,7 @@ name: My Project
 profile: FULLSTACK             # FE | BE | FULLSTACK
 stack: "React + Vite / ASP.NET Core 8 + SQL Server"
 spec_repo: .                   # repo chứa spec/plan; FE tách repo thì trỏ sang repo BE
-dashboard_url: https://claude.ai/artifact/JxMFAyhzfHEk5nMrwo1SgU   # mặc định của plugin
+dashboard_url:                 # link https://claude.ai/artifact/... | none = không dùng dashboard
 
 # --- BE (bỏ nếu profile = FE) ---
 be_build: dotnet build Api.sln -nologo -v q

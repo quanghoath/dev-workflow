@@ -35,5 +35,5 @@ Vòng phản hồi: `BUG-NNN.md` → `systematic-debugging` → test tái hiện
 3. Kịch bản test (TEST-PLAN) viết ở P2, trước khi code.
 4. Không kết luận `pass` khi chưa thấy output thật.
 5. Không chạy P4/P5 trên môi trường `forbidden` trong config (mặc định là prod).
-6. **Cập nhật dashboard** mỗi lần chuyển bước, đến cổng, mở hoặc đóng bug, và khi dừng (`ArtifactData`: `get` → `update` với `if_version`). Ghi dashboard thất bại thì báo một lần rồi tiếp tục công việc; không được bỏ việc vì dashboard.
+6. **Cập nhật dashboard** (`url` = `dashboard_url` trong config) mỗi lần chuyển bước, đến cổng, mở hoặc đóng bug, và khi dừng (`ArtifactData`: `get` → `update` với `if_version`). Nếu `dashboard_url: none` thì bỏ qua mọi bước dashboard. Nếu thiếu hoặc trống, hỏi người dùng một lần (dán link / tạo mới / không dùng) theo `03-dashboard.md` và ghi lại vào config. Ghi dashboard thất bại thì báo một lần rồi tiếp tục công việc; không được bỏ việc vì dashboard.
 7. FULLSTACK: `[CONTRACT]` → `[BE]` → API e2e pass → `[FE]`.

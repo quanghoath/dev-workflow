@@ -27,5 +27,8 @@ Tạo một todo cho mỗi bước dưới đây.
    - Đã có: chỉ thêm khoá `extraKnownMarketplaces.dev-workflow` và `enabledPlugins["dev-workflow@dev-workflow"]`, giữ nguyên mọi khoá khác (permissions, hooks…).
    - Không sửa `.claude/settings.local.json` (file cá nhân, không commit).
    - Nếu `.gitignore` đang bỏ qua `.claude/`, báo người dùng: file này phải được commit.
-8. **Đăng ký dashboard:** dùng tool `ArtifactData`, `set` document `projects/<project>` theo `03-dashboard.md` (kèm `name`, `profile`, `repo`, `stack`, `updatedAt`). Nếu bị từ chối vì quyền: báo người dùng rằng tài khoản này cần được chia sẻ quyền **Editor** trên dashboard. Không chặn các bước còn lại vì lỗi này.
+8. **Dashboard:**
+   - `dashboard_url` đã có giá trị (repo đã init trước đó): dùng luôn, không hỏi lại.
+   - Chưa có: hỏi người dùng (một câu, ba lựa chọn): **dùng dashboard có sẵn** (dán link) / **tạo dashboard mới** / **không dùng**. Làm theo mục "Chọn hoặc tạo dashboard" trong `03-dashboard.md`, rồi ghi kết quả vào `dashboard_url`.
+   - Khác `none`: dùng tool `ArtifactData`, `set` document `projects/<project>` (kèm `name`, `profile`, `repo`, `stack`, `updatedAt`). Nếu bị từ chối vì quyền: báo người dùng rằng tài khoản này cần quyền **Editor** từ chủ dashboard. Không chặn các bước còn lại vì lỗi này.
 9. **Báo cáo:** hồ sơ đã chọn, các lệnh đã chạy được hoặc chưa, các file đã tạo hoặc sửa, việc người dùng cần làm (cài k6, chia sẻ quyền…). Hỏi trước khi commit.

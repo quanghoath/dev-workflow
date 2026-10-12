@@ -13,7 +13,7 @@ Mỗi bước gồm: **mục tiêu**, **skill**, **đầu ra**, **điều kiện
   3. Dán `CLAUDE.snippet.md` vào `CLAUDE.md`.
   4. Kiểm tra `chrome-devtools` MCP có sẵn (nếu hồ sơ có FE); kiểm tra `k6 version` (nếu có rủi ro tải).
 - **Qua bước khi:** mọi lệnh trong config đã chạy thử thành công, hoặc được ghi rõ là chưa có.
-- **Dashboard:** tạo dòng `project` (xem [03-dashboard.md](03-dashboard.md)).
+- **Dashboard:** chọn dashboard có sẵn, tạo mới, hoặc `none`, rồi tạo document `projects/<project>` (xem [03-dashboard.md](03-dashboard.md)).
 
 ## P1 · Spec ◆
 
