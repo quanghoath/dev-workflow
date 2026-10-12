@@ -25,11 +25,11 @@ Cần: Claude Code và `git`.
 
 ```
 /plugin install superpowers@claude-plugins-official
-/plugin marketplace add https://gitlab.com/beesky/dev-workflow.git
+/plugin marketplace add quanghoath/dev-workflow
 /plugin install dev-workflow@dev-workflow
 ```
 
-Nếu lệnh đầu không tìm thấy superpowers, dùng `/plugin marketplace add obra/superpowers-marketplace` rồi `/plugin install superpowers@superpowers-marketplace`.
+Bản sao trên GitLab: `https://gitlab.com/beesky/dev-workflow.git` (dùng thay cho dòng thứ 2 nếu cần). Nếu lệnh đầu không tìm thấy superpowers, dùng `/plugin marketplace add obra/superpowers-marketplace` rồi `/plugin install superpowers@superpowers-marketplace`.
 
 ## Sử dụng
 
@@ -58,4 +58,4 @@ Muốn xem đầu ra trông thế nào trước khi cài: [ví dụ chạy mẫu
 
 ## Đóng góp
 
-Sửa trong `plugins/dev-workflow/`, tăng `version` trong `plugin.json`, gửi Merge Request. Lịch sử thay đổi: [CHANGELOG.md](CHANGELOG.md). Giấy phép: [MIT](LICENSE).
+Sửa trong `plugins/dev-workflow/`, tăng `version` trong `plugin.json`, gửi Pull Request trên [GitHub](https://github.com/quanghoath/dev-workflow). Lịch sử thay đổi: [CHANGELOG.md](CHANGELOG.md). Giấy phép: [MIT](LICENSE).

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.4.1 — 2026-10-12
+- Repo chính chuyển sang GitHub `quanghoath/dev-workflow` (GitLab `beesky/dev-workflow` là bản sao). Lệnh cài: `/plugin marketplace add quanghoath/dev-workflow`.
+
 ## 1.4.0 — 2026-10-12
 - **Chế độ nhanh** cho việc nhỏ: spec/plan trong chat, TDD, kiểm tra P4 cho AC liên quan, báo cáo nhanh. Tự chuyển sang đầy đủ khi phát hiện phức tạp ẩn.
 - Skill mới **`/dev-workflow:status`**: xem tiến độ mọi tính năng và bước tiếp theo, không cần dashboard.

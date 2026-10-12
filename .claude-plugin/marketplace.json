@@ -2,8 +2,8 @@
   "name": "dev-workflow",
   "description": "Spec-to-ship development workflow for Claude Code: spec, plan, TDD, Chrome DevTools UI tests, race/load tests, report.",
   "owner": {
-    "name": "hoanqfpt",
-    "url": "https://gitlab.com/beesky"
+    "name": "Nguyễn Quang Hòa",
+    "url": "https://github.com/quanghoath"
   },
   "plugins": [
     {
