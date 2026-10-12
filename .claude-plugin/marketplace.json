@@ -1,0 +1,12 @@
+{
+  "name": "dev-workflow",
+  "description": "Quy trình phát triển P0–P6: spec → plan → TDD → test UI bằng Chrome DevTools MCP → race/tải → tổng kết, có dashboard claude.ai",
+  "owner": { "name": "hoanqfpt" },
+  "plugins": [
+    {
+      "name": "dev-workflow",
+      "source": "./plugins/dev-workflow",
+      "description": "Skill init (thiết lập dự án) và run (chạy một tính năng qua P1–P6)"
+    }
+  ]
+}

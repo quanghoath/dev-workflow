@@ -1,0 +1,370 @@
+<title>Dev Pipeline Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: summary strip on top, project filter, then one row per feature with a P1–P6 track; rows expand into detail panels. */
+:root {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --sunk: #eceef2;
+  --line: #dde1e8;
+  --fg: #171a21;
+  --muted: #5d6573;
+  --accent: #2f5bd3;
+  --accent-soft: #e4ebfb;
+  --ok: #1d7a4a;      --ok-soft: #dff2e7;
+  --warn: #9a6200;    --warn-soft: #fbeed3;
+  --bad: #b42332;     --bad-soft: #fbe2e4;
+  --idle: #6b7280;    --idle-soft: #eceef2;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111318; --surface: #191c23; --sunk: #21252e; --line: #2c313c;
+    --fg: #e8eaef; --muted: #9aa2b1;
+    --accent: #7d9cf0; --accent-soft: #1f2a48;
+    --ok: #5cc98c; --ok-soft: #173126;
+    --warn: #e7b34f; --warn-soft: #362a12;
+    --bad: #f07a85; --bad-soft: #3a1a1f;
+    --idle: #9aa2b1; --idle-soft: #252a33;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111318; --surface: #191c23; --sunk: #21252e; --line: #2c313c;
+  --fg: #e8eaef; --muted: #9aa2b1;
+  --accent: #7d9cf0; --accent-soft: #1f2a48;
+  --ok: #5cc98c; --ok-soft: #173126;
+  --warn: #e7b34f; --warn-soft: #362a12;
+  --bad: #f07a85; --bad-soft: #3a1a1f;
+  --idle: #9aa2b1; --idle-soft: #252a33;
+  color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--font-body); }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 28px 16px 64px; display: grid; gap: 22px; }
+h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+.sub { color: var(--muted); margin: 6px 0 0; max-width: 65ch; }
+.mono { font-family: var(--font-mono); font-size: 12.5px; }
+.label { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+
+/* summary */
+.summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; display: grid; gap: 2px; }
+.stat b { font: 700 26px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.stat.attn { border-color: var(--warn); background: var(--warn-soft); }
+.stat.attn b { color: var(--warn); }
+
+/* filters */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { font: 500 13px var(--font-body); border: 1px solid var(--line); background: var(--surface); color: var(--fg); padding: 5px 11px; border-radius: 999px; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.chip .n { font-variant-numeric: tabular-nums; opacity: 0.75; }
+.chip:focus-visible, .row-head:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.spacer { flex: 1; }
+.toggle { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: 13px; cursor: pointer; }
+
+/* feature rows */
+.list { display: grid; gap: 10px; }
+.row { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.row.s-waiting_review { border-left: 4px solid var(--warn); }
+.row.s-blocked { border-left: 4px solid var(--bad); }
+.row-head { all: unset; box-sizing: border-box; width: 100%; cursor: pointer; display: grid; gap: 10px; padding: 14px 16px; grid-template-columns: minmax(0, 1fr) auto; align-items: start; }
+.row-head:hover { background: var(--sunk); }
+.title-line { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; min-width: 0; }
+.proj { font: 500 12px var(--font-mono); color: var(--muted); }
+.ftitle { font-weight: 600; font-size: 16px; }
+.summary-line { color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
+.right { display: grid; justify-items: end; gap: 6px; }
+.when { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+
+.pill { font: 600 12px var(--font-body); padding: 3px 9px; border-radius: 999px; white-space: nowrap; }
+.p-todo { background: var(--idle-soft); color: var(--idle); }
+.p-in_progress { background: var(--accent-soft); color: var(--accent); }
+.p-waiting_review { background: var(--warn-soft); color: var(--warn); }
+.p-blocked { background: var(--bad-soft); color: var(--bad); }
+.p-done { background: var(--ok-soft); color: var(--ok); }
+
+.meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 14px 20px; align-items: center; }
+.track { display: grid; grid-template-columns: repeat(6, minmax(34px, 1fr)); gap: 3px; width: min(420px, 100%); }
+.seg { display: grid; gap: 3px; }
+.seg i { display: block; height: 6px; border-radius: 3px; background: var(--sunk); }
+.seg span { font: 500 10.5px var(--font-mono); color: var(--muted); }
+.seg.past i { background: var(--ok); }
+.seg.cur i { background: var(--accent); }
+.seg.cur.s-waiting_review i { background: var(--warn); }
+.seg.cur.s-blocked i { background: var(--bad); }
+.seg.cur span { color: var(--fg); font-weight: 600; }
+.kv { display: inline-flex; gap: 6px; align-items: baseline; font-size: 13px; }
+.kv .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.v.bad { color: var(--bad); } .v.warn { color: var(--warn); } .v.ok { color: var(--ok); }
+
+/* detail */
+.detail { border-top: 1px solid var(--line); padding: 16px; display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); background: var(--bg); }
+.block { display: grid; gap: 8px; align-content: start; min-width: 0; }
+.block h3 { margin: 0; }
+.items { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.items li { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: baseline; font-size: 13.5px; }
+.items .id { font: 500 12px var(--font-mono); color: var(--muted); }
+.items .t { overflow-wrap: anywhere; }
+.dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: var(--idle); }
+.d-done, .d-pass, .d-fixed { background: var(--ok); }
+.d-in_progress { background: var(--accent); }
+.d-fail, .d-open, .d-blocked, .d-needs_redesign { background: var(--bad); }
+.d-warn, .d-accepted { background: var(--warn); }
+.tag { font: 500 11px var(--font-mono); color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 0 4px; }
+.paths { display: grid; gap: 4px; }
+.paths div { overflow-wrap: anywhere; }
+.blocked-box { grid-column: 1 / -1; background: var(--bad-soft); color: var(--bad); border-radius: 8px; padding: 10px 12px; font-weight: 500; }
+.report-box { grid-column: 1 / -1; background: var(--ok-soft); border-radius: 8px; padding: 10px 12px; white-space: pre-wrap; }
+.log li { grid-template-columns: auto auto minmax(0, 1fr); }
+.empty { background: var(--surface); border: 1px dashed var(--line); border-radius: var(--radius); padding: 28px 20px; display: grid; gap: 8px; }
+.empty h2 { font: 600 19px var(--font-display); margin: 0; }
+.empty p { margin: 0; color: var(--muted); max-width: 65ch; }
+.note { color: var(--muted); font-size: 13px; }
+@media (max-width: 560px) {
+  .row-head { grid-template-columns: minmax(0, 1fr); }
+  .right { justify-items: start; grid-auto-flow: column; justify-content: start; align-items: center; }
+}
+@media (prefers-reduced-motion: no-preference) { .row-head, .chip { transition: background-color .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Dev Pipeline Board</h1>
+    <p class="sub">Trạng thái các tính năng đang chạy theo quy trình P1 Spec → P6 Tổng kết, ở mọi dự án. Claude cập nhật sau mỗi lần chuyển bước; mục viền vàng hoặc đỏ đang chờ bạn.</p>
+  </header>
+
+  <section class="summary" id="summary" aria-label="Tổng quan"></section>
+
+  <nav class="filters" id="filters" aria-label="Lọc theo dự án"></nav>
+
+  <section class="list" id="list" aria-live="polite">
+    <div class="empty">
+      <h2>Đang tải dữ liệu…</h2>
+      <p>Nếu trang dừng ở đây, hãy mở trang trên claude.ai khi đã đăng nhập bằng tài khoản được chia sẻ.</p>
+    </div>
+  </section>
+
+  <p class="note" id="note"></p>
+</div>
+
+<script>
+(function () {
+  const PHASES = [
+    ["P1", "Spec"], ["P2", "Plan"], ["P3", "Build"],
+    ["P4", "Tích hợp"], ["P5", "Hardening"], ["P6", "Tổng kết"]
+  ];
+  const STATUS = {
+    todo: "Chưa bắt đầu",
+    in_progress: "Đang làm",
+    waiting_review: "Chờ duyệt",
+    blocked: "Bị chặn",
+    done: "Hoàn thành"
+  };
+  const ORDER = { blocked: 0, waiting_review: 1, in_progress: 2, todo: 3, done: 4 };
+
+  const state = { projects: {}, features: [], filter: "all", hideDone: false, open: new Set(), loaded: { p: false, f: false } };
+
+  try {
+    state.filter = localStorage.getItem("dpb.filter") || "all";
+    state.hideDone = localStorage.getItem("dpb.hideDone") === "1";
+  } catch (e) {}
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const arr = (v) => (Array.isArray(v) ? v : []);
+  const num = (v) => (typeof v === "number" && isFinite(v) ? v : 0);
+
+  function ago(iso) {
+    const t = Date.parse(iso);
+    if (!t) return "";
+    const s = Math.max(0, (Date.now() - t) / 1000);
+    if (s < 60) return "vừa xong";
+    if (s < 3600) return Math.floor(s / 60) + " phút trước";
+    if (s < 86400) return Math.floor(s / 3600) + " giờ trước";
+    if (s < 86400 * 30) return Math.floor(s / 86400) + " ngày trước";
+    return new Date(t).toLocaleDateString("vi-VN");
+  }
+  function stamp(iso) {
+    const t = Date.parse(iso);
+    return t ? new Date(t).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }) : "";
+  }
+
+  function visible() {
+    return state.features
+      .filter((f) => state.filter === "all" || f.project === state.filter)
+      .filter((f) => !(state.hideDone && f.status === "done"))
+      .sort((a, b) => (ORDER[a.status] ?? 5) - (ORDER[b.status] ?? 5) || (Date.parse(b.updatedAt) || 0) - (Date.parse(a.updatedAt) || 0));
+  }
+
+  function renderSummary() {
+    const fs = state.features;
+    const c = (s) => fs.filter((f) => f.status === s).length;
+    const attn = c("waiting_review") + c("blocked");
+    $("summary").innerHTML = [
+      `<div class="stat${attn ? " attn" : ""}"><span class="label">Cần bạn</span><b>${attn}</b><span class="note">${c("waiting_review")} chờ duyệt · ${c("blocked")} bị chặn</span></div>`,
+      `<div class="stat"><span class="label">Đang làm</span><b>${c("in_progress")}</b><span class="note">${c("todo")} chưa bắt đầu</span></div>`,
+      `<div class="stat"><span class="label">Hoàn thành</span><b>${c("done")}</b><span class="note">trên ${fs.length} tính năng</span></div>`,
+      `<div class="stat"><span class="label">Dự án</span><b>${Object.keys(state.projects).length || new Set(fs.map((f) => f.project)).size}</b><span class="note">đang theo dõi</span></div>`
+    ].join("");
+  }
+
+  function renderFilters() {
+    const counts = {};
+    state.features.forEach((f) => { counts[f.project] = (counts[f.project] || 0) + 1; });
+    const ids = Array.from(new Set([...Object.keys(state.projects), ...Object.keys(counts)])).sort();
+    if (state.filter !== "all" && !ids.includes(state.filter)) state.filter = "all";
+    const chip = (id, label, n) => `<button class="chip" type="button" data-f="${esc(id)}" aria-pressed="${state.filter === id}">${esc(label)} <span class="n">${n}</span></button>`;
+    $("filters").innerHTML =
+      chip("all", "Tất cả", state.features.length) +
+      ids.map((id) => {
+        const p = state.projects[id];
+        const label = (p && p.name ? p.name : id) + (p && p.profile ? " · " + p.profile : "");
+        return chip(id, label, counts[id] || 0);
+      }).join("") +
+      `<span class="spacer"></span><label class="toggle"><input type="checkbox" id="hideDone"${state.hideDone ? " checked" : ""}> Ẩn tính năng đã xong</label>`;
+  }
+
+  function track(f) {
+    const cur = PHASES.findIndex((p) => p[0] === f.phase);
+    return `<div class="track" aria-label="Bước ${esc(f.phase || "")}">` + PHASES.map(([id, name], i) => {
+      let cls = "seg";
+      if (f.status === "done" || (cur >= 0 && i < cur)) cls += " past";
+      else if (i === cur) cls += " cur s-" + esc(f.status);
+      return `<div class="${cls}" title="${id} ${esc(name)}"><i></i><span>${id}</span></div>`;
+    }).join("") + `</div>`;
+  }
+
+  function testsSummary(f) {
+    const t = f.tests || {};
+    const out = [];
+    const tasks = arr(f.tasks);
+    if (tasks.length) out.push(`<span class="kv"><span class="label">Task</span><span class="v">${tasks.filter((x) => x.status === "done").length}/${tasks.length}</span></span>`);
+    if (t.unit) out.push(`<span class="kv"><span class="label">Unit</span><span class="v ${num(t.unit.fail) ? "bad" : "ok"}">${num(t.unit.pass)}✓ ${num(t.unit.fail)}✗</span></span>`);
+    if (t.p4) out.push(`<span class="kv"><span class="label">P4</span><span class="v ${num(t.p4.fail) ? "bad" : num(t.p4.warn) ? "warn" : "ok"}">${num(t.p4.pass)}/${num(t.p4.total) || num(t.p4.pass) + num(t.p4.fail) + num(t.p4.warn)}${num(t.p4.warn) ? " · " + num(t.p4.warn) + " warn" : ""}</span></span>`);
+    const p5 = arr(t.p5);
+    if (p5.length) out.push(`<span class="kv"><span class="label">P5</span><span class="v ${p5.some((r) => r.result === "fail") ? "bad" : "ok"}">${p5.filter((r) => r.result === "pass").length}/${p5.length}</span></span>`);
+    const openBugs = arr(f.bugs).filter((b) => b.status !== "fixed" && b.status !== "accepted").length;
+    if (arr(f.bugs).length) out.push(`<span class="kv"><span class="label">Bug mở</span><span class="v ${openBugs ? "bad" : "ok"}">${openBugs}</span></span>`);
+    if (num(f.loops)) out.push(`<span class="kv"><span class="label">Vòng</span><span class="v">${num(f.loops)}</span></span>`);
+    return out.join("");
+  }
+
+  function list(items, fn) {
+    return items.length ? `<ul class="items">${items.map(fn).join("")}</ul>` : `<p class="note">Chưa có.</p>`;
+  }
+
+  function detail(f) {
+    const t = f.tests || {};
+    const g = f.gates || {};
+    const parts = [];
+    if (f.status === "blocked" && f.blockedReason) parts.push(`<div class="blocked-box">Bị chặn: ${esc(f.blockedReason)}</div>`);
+    if (f.report) parts.push(`<div class="report-box"><span class="label">Tổng kết</span>\n${esc(f.report)}</div>`);
+    parts.push(`<div class="block"><h3 class="label">Task</h3>${list(arr(f.tasks), (x) =>
+      `<li><span class="dot d-${esc(x.status)}" title="${esc(x.status)}"></span><span class="t"><span class="id">${esc(x.id)}</span> ${esc(x.title)}</span>${x.tag ? `<span class="tag">${esc(x.tag)}</span>` : "<span></span>"}</li>`)}</div>`);
+    parts.push(`<div class="block"><h3 class="label">Bug</h3>${list(arr(f.bugs), (b) =>
+      `<li><span class="dot d-${esc(b.status)}" title="${esc(b.status)}"></span><span class="t"><span class="id">${esc(b.id)}</span> ${esc(b.title)}</span><span class="id">vòng ${num(b.loop)}/3</span></li>`)}</div>`);
+    parts.push(`<div class="block"><h3 class="label">Hardening (P5)</h3>${list(arr(t.p5), (r) =>
+      `<li><span class="dot d-${esc(r.result)}" title="${esc(r.result)}"></span><span class="t"><span class="id">${esc(r.id)}</span> ${esc(r.name)}</span><span class="mono">${esc(r.metric)}</span></li>`)}</div>`);
+    const gate = (k, name) => `<li><span class="dot ${g[k] ? "d-done" : ""}"></span><span class="t">${name}</span><span class="mono">${g[k] ? esc(stamp(g[k])) : "chưa"}</span></li>`;
+    parts.push(`<div class="block"><h3 class="label">Duyệt</h3><ul class="items">${gate("spec", "Spec (P1)")}${gate("plan", "Plan (P2)")}${gate("report", "Tổng kết (P6)")}</ul></div>`);
+    const paths = [["Branch", f.branch], ["Spec", f.specPath], ["Plan", f.planPath]].filter((p) => p[1]);
+    if (paths.length) parts.push(`<div class="block"><h3 class="label">Trong repo</h3><div class="paths">${paths.map(([k, v]) => `<div><span class="label">${k}</span> <span class="mono">${esc(v)}</span></div>`).join("")}</div></div>`);
+    const log = arr(f.log).slice().sort((a, b) => (Date.parse(b.at) || 0) - (Date.parse(a.at) || 0)).slice(0, 20);
+    parts.push(`<div class="block"><h3 class="label">Nhật ký</h3>${log.length ? `<ul class="items log">${log.map((e) =>
+      `<li><span class="mono">${esc(stamp(e.at))}</span><span class="tag">${esc(e.phase)}</span><span class="t">${esc(e.text)}</span></li>`).join("")}</ul>` : `<p class="note">Chưa có.</p>`}</div>`);
+    return `<div class="detail">${parts.join("")}</div>`;
+  }
+
+  function renderList() {
+    const el = $("list");
+    if (!state.loaded.f) return;
+    const fs = visible();
+    if (!state.features.length) {
+      el.innerHTML = `<div class="empty"><h2>Chưa có tính năng nào</h2><p>Khi Claude bắt đầu P1 cho một tính năng ở bất kỳ dự án nào theo dev-workflow, tính năng đó sẽ hiện ở đây với bước hiện tại, task, kết quả test và bug.</p></div>`;
+      return;
+    }
+    if (!fs.length) {
+      el.innerHTML = `<div class="empty"><h2>Không có tính năng khớp bộ lọc</h2><p>Chọn "Tất cả" hoặc bỏ "Ẩn tính năng đã xong".</p></div>`;
+      return;
+    }
+    el.innerHTML = fs.map((f) => {
+      const open = state.open.has(f._id);
+      const proj = state.projects[f.project];
+      return `<article class="row s-${esc(f.status)}">
+        <button class="row-head" type="button" data-id="${esc(f._id)}" aria-expanded="${open}">
+          <div style="min-width:0">
+            <div class="title-line"><span class="proj">${esc(proj && proj.name ? proj.name : f.project)}</span><span class="ftitle">${esc(f.title || f.slug || f._id)}</span></div>
+            <div class="summary-line">${esc(f.summary || "")}</div>
+          </div>
+          <div class="right"><span class="pill p-${esc(f.status)}">${esc(STATUS[f.status] || f.status || "—")}</span><span class="when" title="${esc(f.updatedAt)}">${esc(ago(f.updatedAt))}</span></div>
+          <div class="meta">${track(f)}${testsSummary(f)}</div>
+        </button>
+        ${open ? detail(f) : ""}
+      </article>`;
+    }).join("");
+  }
+
+  function render() { renderSummary(); renderFilters(); renderList(); }
+
+  document.addEventListener("click", (e) => {
+    const chip = e.target.closest(".chip");
+    if (chip) {
+      state.filter = chip.dataset.f;
+      try { localStorage.setItem("dpb.filter", state.filter); } catch (err) {}
+      render();
+      return;
+    }
+    const head = e.target.closest(".row-head");
+    if (head) {
+      const id = head.dataset.id;
+      state.open.has(id) ? state.open.delete(id) : state.open.add(id);
+      renderList();
+    }
+  });
+  document.addEventListener("change", (e) => {
+    if (e.target.id === "hideDone") {
+      state.hideDone = e.target.checked;
+      try { localStorage.setItem("dpb.hideDone", state.hideDone ? "1" : "0"); } catch (err) {}
+      render();
+    }
+  });
+
+  function fail(msg) {
+    $("list").innerHTML = `<div class="empty"><h2>Không đọc được dữ liệu</h2><p>${esc(msg)}</p></div>`;
+  }
+
+  async function start() {
+    if (!window.claude || typeof window.claude.use !== "function") {
+      fail("Trang này cần mở trên claude.ai để đọc dữ liệu dashboard.");
+      return;
+    }
+    const db = await window.claude.use("db");
+    if (!db) {
+      fail("Mở trang trên claude.ai khi đã đăng nhập bằng tài khoản được chia sẻ quyền xem.");
+      return;
+    }
+    const onErr = (e) => { if (e && e.code !== "unavailable") $("note").textContent = "Mất kết nối dữ liệu trực tiếp. Tải lại trang để kết nối lại."; };
+    db.collection("projects").onSnapshot((snap) => {
+      const m = {};
+      snap.docs.forEach((d) => { const v = d.data(); if (v) m[d.id] = v; });
+      state.projects = m;
+      state.loaded.p = true;
+      render();
+    }, onErr);
+    db.collection("features").onSnapshot((snap) => {
+      state.features = snap.docs.map((d) => Object.assign({ _id: d.id }, d.data() || {}));
+      state.loaded.f = true;
+      render();
+    }, onErr);
+    setInterval(() => { if (state.loaded.f) renderList(); }, 60000);
+  }
+
+  render();
+  start().catch((e) => fail((e && e.message) || "Lỗi không xác định."));
+})();
+</script>
