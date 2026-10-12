@@ -1,12 +1,14 @@
 {
   "name": "dev-workflow",
-  "description": "Quy trình phát triển P0–P6: spec → plan → TDD → test UI bằng Chrome DevTools MCP → race/tải → tổng kết, có dashboard claude.ai",
-  "owner": { "name": "hoanqfpt" },
+  "description": "Spec-to-ship development workflow for Claude Code: spec, plan, TDD, Chrome DevTools UI tests, race/load tests, report.",
+  "owner": { "name": "hoanqfpt", "url": "https://gitlab.com/beesky" },
   "plugins": [
     {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
-      "description": "Skill init (thiết lập dự án) và run (chạy một tính năng qua P1–P6)"
+      "description": "Skills dev-workflow:init (set up a repo) and dev-workflow:run (take a feature through P1–P6 with review gates, TDD, UI/API/race/load testing and a final report).",
+      "category": "development",
+      "tags": ["workflow", "testing", "tdd", "qa", "productivity"]
     }
   ]
 }

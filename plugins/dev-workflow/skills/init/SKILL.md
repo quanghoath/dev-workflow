@@ -1,6 +1,6 @@
 ---
 name: init
-description: Thiết lập một repo để chạy theo dev-workflow (bước P0) - nhận diện hồ sơ FE/BE/FULLSTACK, tạo docs/workflow-config.md, chạy thử lệnh build/test, thêm đoạn quy trình vào CLAUDE.md, cấu hình .claude/settings.json để cả team tự có plugin, đăng ký dự án lên dashboard. Dùng khi người dùng nói "init dev-workflow", "thiết lập quy trình cho dự án này", hoặc khi chạy dev-workflow:run mà repo chưa có docs/workflow-config.md.
+description: Set up a repository for dev-workflow (step P0) - detect the FE/BE/FULLSTACK profile, create docs/workflow-config.md with verified build/test commands, add the workflow note to CLAUDE.md, add .claude/settings.json so teammates get the plugin automatically, and choose or create the status dashboard. Use when the user says "init dev-workflow", "set up the workflow for this project", or when dev-workflow:run finds no docs/workflow-config.md. / Thiết lập dự án theo dev-workflow.
 ---
 
 # dev-workflow · P0 Khởi tạo dự án
@@ -18,6 +18,7 @@ Tạo một todo cho mỗi bước dưới đây.
 3. **Tạo `docs/workflow-config.md`** từ `${CLAUDE_PLUGIN_ROOT}/templates/workflow-config.md`. Điền lệnh thật của repo, không để lại giá trị ví dụ.
 4. **Chạy thử từng lệnh** `*_build`, `*_unit_test`, `*_lint` (và khởi động `*_run` rồi gọi `be_health` / mở `fe_url` nếu môi trường cho phép). Lệnh nào chạy được thì giữ lại. Lệnh nào hỏng hoặc chưa có thì ghi `none — <lý do>`. Không sửa code của repo ở bước này.
 5. **Kiểm tra công cụ:**
+   - Plugin **superpowers** (skill `superpowers:brainstorming`, `superpowers:writing-plans`…) là bắt buộc. Nếu chưa có, hướng dẫn cài: `/plugin install superpowers@claude-plugins-official` (hoặc `/plugin marketplace add obra/superpowers-marketplace` rồi `/plugin install superpowers@superpowers-marketplace`).
    - Hồ sơ có FE: Chrome DevTools MCP có sẵn (tool `mcp__chrome-devtools__*`). Nếu chưa có, đề xuất thêm vào `.mcp.json`:
      `{"mcpServers":{"chrome-devtools":{"command":"npx","args":["-y","chrome-devtools-mcp@latest"]}}}`
    - Có khả năng cần P5: `k6 version`. Nếu chưa có, ghi chú cách cài (`winget install k6` / `brew install k6`), không tự cài.

@@ -1,6 +1,14 @@
 {
   "name": "dev-workflow",
-  "version": "1.2.0",
-  "description": "Quy trình phát triển P0–P6 cho dự án FE, BE hoặc FULLSTACK, chạy trên superpowers, trạng thái hiển thị trên dashboard claude.ai",
-  "author": { "name": "hoanqfpt" }
+  "displayName": "Dev Workflow (P0–P6)",
+  "version": "1.3.0",
+  "description": "Spec-to-ship workflow for FE, BE or full-stack projects on top of superpowers: spec → plan + test plan → TDD → UI testing with Chrome DevTools MCP → race-condition & load testing → final report, with review gates, a 3-round bug feedback loop and an optional live status dashboard. / Quy trình phát triển P0–P6 cho dự án FE, BE hoặc fullstack.",
+  "author": { "name": "hoanqfpt", "url": "https://gitlab.com/beesky" },
+  "homepage": "https://gitlab.com/beesky/dev-workflow",
+  "repository": "https://gitlab.com/beesky/dev-workflow",
+  "license": "MIT",
+  "keywords": [
+    "workflow", "tdd", "testing", "e2e", "chrome-devtools", "load-testing", "race-condition",
+    "k6", "lighthouse", "spec", "planning", "code-review", "superpowers", "fullstack", "dashboard", "vietnamese"
+  ]
 }

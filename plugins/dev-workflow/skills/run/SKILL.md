@@ -1,6 +1,6 @@
 ---
 name: run
-description: Chạy một tính năng hoặc sửa lỗi không tầm thường qua quy trình dev-workflow P1–P6 - spec, plan + TEST-PLAN, build TDD, kiểm tra tích hợp (Chrome DevTools MCP / API e2e), hardening (race, tải, hiệu năng), tổng kết - và cập nhật dashboard sau mỗi bước. Dùng khi người dùng yêu cầu làm tính năng "theo dev-workflow", hoặc khi repo có docs/workflow-config.md và người dùng yêu cầu xây hoặc thay đổi tính năng.
+description: Take a feature or non-trivial bug fix through the dev-workflow P1–P6 pipeline - spec with acceptance criteria and risks, plan + test plan, TDD build, integration testing (Chrome DevTools MCP for UI, API end-to-end), hardening (race conditions, load, performance), final report - with review gates and status dashboard updates. Use when the user asks to build or change a feature "with dev-workflow", or when the repo has docs/workflow-config.md. / Chạy tính năng qua quy trình P1–P6.
 ---
 
 # dev-workflow · Chạy tính năng P1–P6
@@ -30,6 +30,7 @@ Vòng phản hồi: `BUG-NNN.md` → `systematic-debugging` → test tái hiện
 
 ## Quy tắc không được vi phạm
 
+0. Kiểm tra skill `superpowers:brainstorming` có sẵn. Nếu không có, dừng lại và hướng dẫn cài: `/plugin install superpowers@claude-plugins-official` (hoặc `/plugin marketplace add obra/superpowers-marketplace` rồi `/plugin install superpowers@superpowers-marketplace`).
 1. Tạo todo cho P1–P6 ngay khi bắt đầu; tính năng đang dở thì tiếp tục từ bước chưa xong (xem dashboard và thư mục `runs/<slug>/`).
 2. Không vượt cổng ◆ khi chưa có câu trả lời đồng ý của người dùng cho đúng tài liệu đó.
 3. Kịch bản test (TEST-PLAN) viết ở P2, trước khi code.
@@ -37,3 +38,4 @@ Vòng phản hồi: `BUG-NNN.md` → `systematic-debugging` → test tái hiện
 5. Không chạy P4/P5 trên môi trường `forbidden` trong config (mặc định là prod).
 6. **Cập nhật dashboard** (`url` = `dashboard_url` trong config) mỗi lần chuyển bước, đến cổng, mở hoặc đóng bug, và khi dừng (`ArtifactData`: `get` → `update` với `if_version`). Nếu `dashboard_url: none` thì bỏ qua mọi bước dashboard. Nếu thiếu hoặc trống, hỏi người dùng một lần (dán link / tạo mới / không dùng) theo `03-dashboard.md` và ghi lại vào config. Ghi dashboard thất bại thì báo một lần rồi tiếp tục công việc; không được bỏ việc vì dashboard.
 7. FULLSTACK: `[CONTRACT]` → `[BE]` → API e2e pass → `[FE]`.
+8. Tài liệu tham chiếu viết bằng tiếng Việt, nhưng trao đổi và viết spec, plan, report bằng ngôn ngữ người dùng đang dùng.
