@@ -1,88 +1,58 @@
-# dev-workflow
+# Dev Workflow for Claude Code
 
-Plugin Claude Code cho quy trình phát triển dùng chung mọi dự án (chỉ FE, chỉ BE, hoặc FULLSTACK), chạy trên superpowers. Trạng thái hiển thị trên một dashboard claude.ai do chính team bạn tạo.
+**Spec-to-ship workflow plugin for Claude Code.** Works for frontend-only, backend-only or full-stack projects. Built on [superpowers](https://github.com/obra/superpowers).
 
-```
-P0 KHỞI TẠO (1 lần/dự án)  /dev-workflow:init
-P1 SPEC                    brainstorming + tiêu chí nghiệm thu + rủi ro      ◆ duyệt
-P2 PLAN + TEST-PLAN        writing-plans, task [BE]/[FE]/[CONTRACT]          ◆ duyệt
-P3 BUILD                   TDD từng task → review → sửa
-P4 TÍCH HỢP                FE: Chrome DevTools MCP · BE: API e2e  ─┐ lỗi → BUG → P3
-P5 HARDENING               race · tải · hiệu năng (theo rủi ro)   ─┘ tối đa 3 vòng/bug
-P6 TỔNG KẾT                verify + code review + REPORT.md                  ◆ duyệt
-```
-
-## Cài đặt
-
-Yêu cầu: Claude Code, plugin **superpowers**, và `git`. Repo này public nên không cần tài khoản GitLab.
-
-**Cách 1 — tự động theo dự án (khuyên dùng cho team).** Repo dự án đã chạy `/dev-workflow:init` có sẵn `.claude/settings.json` khai báo plugin. Dev chỉ cần clone repo, mở Claude Code, bấm **Trust** thư mục; plugin tự được tải và tự cập nhật. Nếu thấy thông báo "Plugins changed", chạy `/reload-plugins`.
-
-**Cách 2 — cài tay cho một máy** (dùng ở mọi repo, kể cả repo chưa init):
+Claude takes each feature through 6 steps. You approve the spec, the plan and the final report; Claude does the rest:
 
 ```
+P1 Spec         acceptance criteria + risk list (race? load? perf?)        ◆ you approve
+P2 Plan         tasks [BE]/[FE]/[CONTRACT] + TEST-PLAN written before code ◆ you approve
+P3 Build        TDD per task → review → fix
+P4 Integration  UI via Chrome DevTools MCP · API end-to-end   ─┐ bug → fix loop
+P5 Hardening    race conditions · load (k6) · Lighthouse       ─┘ max 3 rounds/bug
+P6 Report       verification + code review + REPORT.md                    ◆ you approve
+```
+
+Optional: a live status board on claude.ai showing every feature's step, tests and bugs.
+
+⭐ If this helps you, star the repo so others can find it. Issues and ideas are welcome.
+
+---
+
+## Cài đặt (3 bước)
+
+Cần: Claude Code và `git`.
+
+```
+/plugin install superpowers@claude-plugins-official
 /plugin marketplace add https://gitlab.com/beesky/dev-workflow.git
 /plugin install dev-workflow@dev-workflow
 ```
 
-Bật tự cập nhật: `/plugin` → tab **Marketplaces** → `dev-workflow` → **Enable auto-update**. Nếu không bật, cập nhật tay:
+Nếu lệnh đầu không tìm thấy superpowers, dùng `/plugin marketplace add obra/superpowers-marketplace` rồi `/plugin install superpowers@superpowers-marketplace`.
 
-```
-/plugin marketplace update dev-workflow
-/plugin update dev-workflow@dev-workflow
-```
+## Sử dụng
 
-## Dashboard và quyền
-
-- Khi chạy `/dev-workflow:init`, Claude hỏi: **dùng dashboard có sẵn** (dán link), **tạo dashboard mới** (publish trang mới thuộc tài khoản claude.ai của bạn), hoặc **không dùng**. Link được ghi vào `dashboard_url` trong `docs/workflow-config.md` và commit theo repo, nên cả team dùng chung một dashboard mà không phải hỏi lại.
-- Team dùng chung một dashboard cho nhiều dự án: lần init đầu tạo mới, các dự án sau dán link đó vào.
-- Ai cần Claude **ghi** trạng thái thì tài khoản claude.ai của người đó phải có quyền **Editor** trên dashboard. Viewer chỉ xem được. Dev cùng tổ chức claude.ai: share cho tổ chức với quyền Editor. Dev dùng tài khoản cá nhân: mời từng email với quyền Editor.
-- **Không bật link public cho dashboard.** Người vào bằng link chỉ xem được, và khi bật link thì các Editor ngoài tổ chức bị mất quyền ghi.
-
-## Dùng trong một dự án
-
-1. Mở repo, chạy `/dev-workflow:init`. Claude nhận diện hồ sơ, tạo `docs/workflow-config.md`, chạy thử lệnh build/test, thêm đoạn quy trình vào `CLAUDE.md`, tạo `.claude/settings.json` cho team, chọn hoặc tạo dashboard, và đăng ký dự án lên dashboard.
-2. Commit 3 file đó (`docs/workflow-config.md`, `CLAUDE.md`, `.claude/settings.json`). Dev khác clone về là có plugin.
+1. Mở repo dự án, gõ `/dev-workflow:init`. Claude tự nhận diện dự án FE/BE/fullstack, ghi lệnh build/test, hỏi bạn có dùng dashboard không.
+2. Commit các file Claude vừa tạo. Dev khác clone repo về, bấm **Trust** là có plugin, không cần cài.
 3. Làm tính năng: *"làm tính năng X theo dev-workflow"* hoặc `/dev-workflow:run <mô tả>`.
 
-## Cấu trúc repo
+## Dashboard (tuỳ chọn)
 
-```
-.claude-plugin/marketplace.json          # repo này là marketplace
-plugins/dev-workflow/
-├── .claude-plugin/plugin.json           # tăng "version" mỗi lần phát hành
-├── skills/init/SKILL.md                 # P0
-├── skills/run/SKILL.md                  # P1–P6
-├── reference/
-│   ├── 01-ho-so-du-an.md                # hồ sơ FE/BE/FULLSTACK, công cụ test, ngưỡng
-│   ├── 02-quy-trinh.md                  # chi tiết P0–P6, vòng phản hồi, khi nào dừng
-│   ├── 03-dashboard.md                  # cấu trúc dữ liệu dashboard, cách ghi
-│   └── 04-quy-trinh-test.md             # test từng bước: unit, API, UI (Chrome DevTools MCP), race, tải, hiệu năng
-├── dashboard/index.html                 # mã nguồn trang dashboard; init dùng file này khi "tạo dashboard mới"
-└── templates/                           # workflow-config, CLAUDE.snippet, claude-settings.json, spec-addendum, TEST-PLAN, BUG, REPORT
-```
+- Lúc init chọn **tạo mới** (trang claude.ai thuộc tài khoản của bạn), **dán link có sẵn**, hoặc **không dùng**.
+- Muốn Claude của người khác ghi vào dashboard: share cho họ quyền **Editor**. Người ở **ngoài tổ chức claude.ai** của bạn hiện không ghi được, dù có quyền Editor; khi đó dùng chung gói claude.ai Team, hoặc mỗi người một dashboard.
+- Không bật link public cho dashboard.
 
-## Phát hành thay đổi
+## Tài liệu
 
-1. Sửa file trong `plugins/dev-workflow/`.
-2. Tăng `version` trong `plugins/dev-workflow/.claude-plugin/plugin.json` (không tăng thì các máy giữ bản cũ).
-3. `claude plugin validate .` → commit → merge vào `main`. Mọi máy bật auto-update sẽ nhận bản mới, nên chỉ merge bản đã thử.
+| File | Nội dung |
+|---|---|
+| [02-quy-trinh.md](plugins/dev-workflow/reference/02-quy-trinh.md) | Chi tiết P0–P6, vòng sửa lỗi, khi nào Claude dừng chờ bạn |
+| [04-quy-trinh-test.md](plugins/dev-workflow/reference/04-quy-trinh-test.md) | Test từng bước: unit, API, UI, race, tải, hiệu năng |
+| [01-ho-so-du-an.md](plugins/dev-workflow/reference/01-ho-so-du-an.md) | Công cụ test theo stack và ngưỡng mặc định |
+| [03-dashboard.md](plugins/dev-workflow/reference/03-dashboard.md) | Dữ liệu dashboard và cách Claude cập nhật |
+| [templates/](plugins/dev-workflow/templates/) | Mẫu spec, TEST-PLAN, BUG, REPORT, config |
 
-Sửa giao diện dashboard: sửa `plugins/dev-workflow/dashboard/index.html`. Dashboard đã tạo không tự đổi; muốn cập nhật thì nhờ Claude publish lại vào **đúng URL** của dashboard đó (xem `reference/03-dashboard.md`). Dữ liệu được giữ nguyên.
+## Đóng góp
 
-## Cấu trúc trong mỗi dự án
-
-```
-<repo>/
-├── CLAUDE.md                                  # có đoạn dev-workflow
-└── docs/
-    ├── workflow-config.md                     # hồ sơ + lệnh + URL + môi trường được test
-    └── superpowers/
-        ├── specs/YYYY-MM-DD-<slug>-design.md
-        ├── plans/YYYY-MM-DD-<slug>.md
-        └── runs/<slug>/
-            ├── TEST-PLAN.md
-            ├── bugs/BUG-001.md …
-            ├── evidence/
-            └── REPORT.md
-```
+Sửa trong `plugins/dev-workflow/`, tăng `version` trong `plugin.json`, gửi Merge Request. Lịch sử thay đổi: [CHANGELOG.md](CHANGELOG.md). Giấy phép: [MIT](LICENSE).
