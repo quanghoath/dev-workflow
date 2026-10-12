@@ -12,48 +12,48 @@ Hai collection:
 
 ### `projects` — 1 document / dự án
 
-`doc_id` = `project` trong `workflow-config.md` (kebab-case, ví dụ `poker-api`).
+`doc_id` = `project` trong `workflow-config.md` (kebab-case, ví dụ `shop-api`).
 
 ```json
 {
-  "name": "Poker API",
+  "name": "Shop API",
   "profile": "BE",               // FE | BE | FULLSTACK
-  "repo": "gitlab.com/x/poker-api",
-  "stack": ".NET 7 + Dapper + SQL Server",
+  "repo": "gitlab.com/acme/shop-api",
+  "stack": "ASP.NET Core 8 + SQL Server",
   "updatedAt": "2026-10-12T09:30:00+07:00"
 }
 ```
 
 ### `features` — 1 document / tính năng
 
-`doc_id` = `<project>--<slug>` (ví dụ `poker-api--buyin-thanh-toan`).
+`doc_id` = `<project>--<slug>` (ví dụ `shop-api--dat-hang`).
 
 ```json
 {
-  "project": "poker-api",
-  "slug": "buyin-thanh-toan",
-  "title": "Buyin qua thanh toán tài khoản ảo",
+  "project": "shop-api",
+  "slug": "dat-hang",
+  "title": "Đặt hàng và trừ tồn kho",
   "phase": "P3",                 // P1..P6
   "status": "in_progress",       // xem bảng trạng thái
-  "summary": "Đang làm task 4/9: BuyinCoreService",   // 1 dòng, người đọc hiểu ngay
-  "specPath": "docs/superpowers/specs/2026-10-12-buyin-thanh-toan-design.md",
-  "planPath": "docs/superpowers/plans/2026-10-12-buyin-thanh-toan.md",
-  "branch": "feat/buyin-thanh-toan",
+  "summary": "Đang làm task 4/9: OrderService trừ tồn kho",   // 1 dòng, người đọc hiểu ngay
+  "specPath": "docs/superpowers/specs/2026-10-12-dat-hang-design.md",
+  "planPath": "docs/superpowers/plans/2026-10-12-dat-hang.md",
+  "branch": "feat/dat-hang",
   "gates": {                     // thời điểm người duyệt đồng ý
     "spec": "2026-10-12T10:00:00+07:00",
     "plan": null,
     "report": null
   },
   "tasks": [
-    { "id": "T1", "title": "Bảng kmBuyinThanhToan", "tag": "BE", "status": "done" }
+    { "id": "T1", "title": "Bảng orders + order_items", "tag": "BE", "status": "done" }
   ],
   "tests": {                     // cập nhật sau mỗi lượt chạy
     "unit":  { "pass": 42, "fail": 0 },
     "p4":    { "pass": 6, "fail": 1, "warn": 1, "total": 8 },
-    "p5":    [ { "id": "R-1", "name": "2 request cùng ghế", "result": "pass", "metric": "1/20 thành công" } ]
+    "p5":    [ { "id": "R-1", "name": "20 request mua sản phẩm còn 1", "result": "pass", "metric": "1/20 thành công" } ]
   },
   "bugs": [
-    { "id": "BUG-001", "title": "Double-submit tạo 2 buyin", "status": "open", "loop": 1 }
+    { "id": "BUG-001", "title": "Double-submit tạo 2 đơn", "status": "open", "loop": 1 }
   ],
   "loops": 1,                    // số lần quay về P3 từ P4/P5
   "blockedReason": null,

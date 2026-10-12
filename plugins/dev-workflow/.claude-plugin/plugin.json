@@ -1,6 +1,6 @@
 {
   "name": "dev-workflow",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Quy trình phát triển P0–P6 cho dự án FE, BE hoặc FULLSTACK, chạy trên superpowers, trạng thái hiển thị trên dashboard claude.ai",
   "author": { "name": "hoanqfpt" }
 }

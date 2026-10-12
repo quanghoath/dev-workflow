@@ -17,14 +17,14 @@
 3. Chạy toàn bộ: lệnh `unit_test` trong config, rồi lệnh `build` (và `lint` nếu có).
 4. Ghi số pass/fail vào dashboard `tests.unit`.
 
-Cần có test cho: logic nghiệp vụ, nhánh lỗi (`2001`/`4xx`), giá trị biên, và mọi bug từ vòng phản hồi (test tái hiện).
+Cần có test cho: logic nghiệp vụ, nhánh lỗi (`4xx` hoặc mã lỗi nghiệp vụ của dự án), giá trị biên, và mọi bug từ vòng phản hồi (test tái hiện).
 
 ## Bước 2 · API e2e (P4, hồ sơ BE / FULLSTACK)
 
 1. Khởi động API theo `be_run` trong config; chờ `be_health` trả về OK.
 2. Lấy token test theo hướng dẫn trong config (không commit token).
 3. Với mỗi kịch bản API trong TEST-PLAN: gửi request (`.http`, `curl`, script), kiểm tra:
-   - mã HTTP và envelope (ví dụ `status=2000`);
+   - mã HTTP và envelope (nếu dự án bọc response, ví dụ `{ status, message, data }`);
    - dữ liệu trả về đúng hợp đồng trong spec;
    - **trạng thái DB sau khi gọi** (truy vấn kiểm tra ghi trong TEST-PLAN) — đây là phần hay bị bỏ qua nhất;
    - các nhánh lỗi: thiếu trường, sai quyền, token hết hạn, id không tồn tại.
@@ -63,7 +63,7 @@ Mỗi `fail`/`warn` → tạo `BUG-NNN.md` → vòng phản hồi ([02-quy-trinh
 
 ## Bước 4 · Race condition (P5, nếu spec đánh dấu)
 
-Mỗi kịch bản `R-n` phải nêu rõ **bất biến**, tức điều luôn phải đúng (ví dụ "một ghế chỉ có 1 người", "số dư không âm", "mỗi đơn chỉ thanh toán 1 lần").
+Mỗi kịch bản `R-n` phải nêu rõ **bất biến**, tức điều luôn phải đúng (ví dụ "một sản phẩm không bán quá tồn kho", "số dư không âm", "mỗi đơn chỉ thanh toán 1 lần").
 
 **BE: request song song**
 
@@ -99,7 +99,7 @@ export default function () {
   const res = http.post(`${__ENV.BASE_URL}/api/x`, JSON.stringify({ /* payload */ }), {
     headers: { 'Content-Type': 'application/json', Authorization: __ENV.TOKEN },
   });
-  check(res, { 'envelope ok': (r) => r.json('status') === 2000 });
+  check(res, { 'thành công': (r) => r.status >= 200 && r.status < 300 }); // dự án dùng envelope thì kiểm r.json('status')
 }
 ```
 
