@@ -17,7 +17,7 @@ P6 TỔNG KẾT                verify + code review + REPORT.md                 
 Yêu cầu: Claude Code, plugin **superpowers**, và git trên máy đã đăng nhập được repo này. Repo private thì cần Git Credential Manager (HTTPS) hoặc SSH key trong ssh-agent; Claude Code không hỏi mật khẩu.
 
 ```
-/plugin marketplace add https://gitlab.com/<group>/dev-workflow.git
+/plugin marketplace add https://gitlab.com/beesky/dev-workflow.git
 /plugin install dev-workflow@dev-workflow
 ```
 
