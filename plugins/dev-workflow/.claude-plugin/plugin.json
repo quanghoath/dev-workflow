@@ -2,7 +2,7 @@
   "name": "dev-workflow",
   "displayName": "Dev Workflow (P0–P6)",
   "version": "1.4.0",
-  "description": "Spec-to-ship workflow for FE, BE or full-stack projects on top of superpowers: spec → plan + test plan → TDD → UI testing with Chrome DevTools MCP → race-condition & load testing → final report, with review gates, a 3-round bug feedback loop a quick mode for small fixes, a status command and an optional live dashboard. / Quy trình phát triển P0–P6 cho dự án FE, BE hoặc fullstack.",
+  "description": "Spec-to-ship workflow for FE, BE or full-stack projects on top of superpowers: spec → plan + test plan → TDD → UI testing with Chrome DevTools MCP → race-condition & load testing → final report, with review gates, a 3-round bug feedback loop, a quick mode for small fixes, a status command and an optional live dashboard. / Quy trình phát triển P0–P6 cho dự án FE, BE hoặc fullstack.",
   "author": {
     "name": "hoanqfpt",
     "url": "https://gitlab.com/beesky"
