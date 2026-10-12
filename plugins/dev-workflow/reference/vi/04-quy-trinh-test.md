@@ -61,6 +61,19 @@ Sau khi các kịch bản chính pass, kiểm tra thêm (`warn` nếu không đ�
 
 Mỗi `fail`/`warn` → tạo `BUG-NNN.md` → vòng phản hồi ([02-quy-trinh.md](02-quy-trinh.md#vòng-phản-hồi-p4p5--p3)).
 
+## Bước 3b · Ghi lại thành test e2e (P4, khi `e2e_framework: playwright`)
+
+Chrome DevTools MCP dùng để **khám phá và kiểm tra lần đầu**. Kịch bản đã `pass` thì được **ghi lại thành test Playwright** trong repo, để CI chạy lại mãi và lỗi cũ không quay lại.
+
+1. Với mỗi kịch bản UI có đánh dấu `smoke` hoặc gắn với một BUG, tạo hoặc cập nhật `e2e/<slug>.spec.ts` (đường dẫn theo `e2e_dir` trong config).
+2. Một kịch bản là một `test(...)`, tên test chứa ID kịch bản (ví dụ `test('UI-2 không tạo 2 đơn khi double-click', …)`).
+3. Selector ưu tiên `getByRole` / `getByLabel` / `getByText`, đúng như những gì `take_snapshot` thấy. Không dùng selector CSS dễ vỡ.
+4. Kiểm tra như MCP đã kiểm: kết quả hiển thị, số request ghi (`page.waitForResponse` / đếm `page.on('request')`), và không có `console.error` (gắn `page.on('console')`).
+5. Chạy `e2e_test` trong config. Test phải **xanh** trước khi kịch bản được ghi `pass` trong TEST-PLAN; cột Bằng chứng ghi thêm tên file test.
+6. Dữ liệu test: dùng seed hoặc API tạo dữ liệu trong `beforeEach`, không phụ thuộc thứ tự chạy.
+
+Repo chưa có Playwright: ở `dev-workflow:init`, hỏi người dùng có muốn thêm không (`npm init playwright@latest`). Nếu không, ghi `e2e_framework: none` và bỏ qua bước này.
+
 ## Bước 4 · Race condition (P5, nếu spec đánh dấu)
 
 Mỗi kịch bản `R-n` phải nêu rõ **bất biến**, tức điều luôn phải đúng (ví dụ "một sản phẩm không bán quá tồn kho", "số dư không âm", "mỗi đơn chỉ thanh toán 1 lần").
@@ -115,6 +128,6 @@ Nếu không đạt ngưỡng: tìm nút thắt trước (query chậm, thiếu 
 ## Bước 7 · Hồi quy trước tổng kết (P6)
 
 1. `build` + `unit_test` toàn repo.
-2. Chạy lại các kịch bản P4 có đánh dấu `smoke` trong TEST-PLAN.
+2. Chạy `e2e_test` (nếu có) và các kịch bản P4 có đánh dấu `smoke` chưa được ghi thành test e2e.
 3. Nếu P5 có sửa code sau lần đo cuối: chạy lại `R-n` liên quan.
 4. Mọi kết quả đưa vào REPORT.md.

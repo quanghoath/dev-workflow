@@ -135,17 +135,17 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
 <div class="wrap">
   <header>
     <h1>Dev Pipeline Board</h1>
-    <p class="sub">Trạng thái các tính năng đang chạy theo quy trình P1 Spec → P6 Tổng kết, ở mọi dự án. Claude cập nhật sau mỗi lần chuyển bước; mục viền vàng hoặc đỏ đang chờ bạn.</p>
+    <p class="sub" id="sub"></p>
   </header>
 
-  <section class="summary" id="summary" aria-label="Tổng quan"></section>
+  <section class="summary" id="summary"></section>
 
-  <nav class="filters" id="filters" aria-label="Lọc theo dự án"></nav>
+  <nav class="filters" id="filters"></nav>
 
   <section class="list" id="list" aria-live="polite">
     <div class="empty">
-      <h2>Đang tải dữ liệu…</h2>
-      <p>Nếu trang dừng ở đây, hãy mở trang trên claude.ai khi đã đăng nhập bằng tài khoản được chia sẻ.</p>
+      <h2 id="loadingTitle">Loading…</h2>
+      <p id="loadingText"></p>
     </div>
   </section>
 
@@ -154,17 +154,65 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
 
 <script>
 (function () {
-  const PHASES = [
-    ["P1", "Spec"], ["P2", "Plan"], ["P3", "Build"],
-    ["P4", "Tích hợp"], ["P5", "Hardening"], ["P6", "Tổng kết"]
-  ];
-  const STATUS = {
-    todo: "Chưa bắt đầu",
-    in_progress: "Đang làm",
-    waiting_review: "Chờ duyệt",
-    blocked: "Bị chặn",
-    done: "Hoàn thành"
+  const LANG = (navigator.language || "en").toLowerCase().startsWith("vi") ? "vi" : "en";
+  const I18N = {
+    en: {
+      locale: "en-US",
+      sub: "Features moving through P1 Spec → P6 Report, across all projects. Claude updates this after every step; amber or red rows are waiting for you.",
+      summaryAria: "Summary", filterAria: "Filter by project",
+      loadingTitle: "Loading…", loadingText: "If the page stays here, open it on claude.ai while signed in with an account it is shared with.",
+      phases: ["Spec", "Plan", "Build", "Integration", "Hardening", "Report"],
+      status: { todo: "Not started", in_progress: "In progress", waiting_review: "Waiting for review", blocked: "Blocked", done: "Done" },
+      needsYou: "Needs you", waiting: "waiting for review", blocked: "blocked",
+      inProgress: "In progress", notStarted: "not started",
+      done: "Done", ofFeatures: (n) => `of ${n} features`,
+      projects: "Projects", tracked: "tracked",
+      all: "All", hideDone: "Hide finished features", step: "Step",
+      tasks: "Tasks", openBugs: "Open bugs", rounds: "Rounds", none: "None yet.",
+      blockedPrefix: "Blocked: ", report: "Report", bugs: "Bugs", round: (n) => `round ${n}/3`,
+      approvals: "Approvals", notYet: "not yet", gates: ["Spec (P1)", "Plan (P2)", "Report (P6)"],
+      inRepo: "In the repo", log: "Log", pr: "Pull request",
+      quick: "quick", quickTitle: "Quick mode: spec and plan in chat, no P5",
+      emptyTitle: "No features yet",
+      emptyText: "When Claude starts P1 for a feature in any project using dev-workflow, it shows up here with its current step, tasks, test results and bugs.",
+      noMatchTitle: "No features match the filter", noMatchText: "Choose \"All\" or untick \"Hide finished features\".",
+      failTitle: "Could not read the data",
+      needClaude: "Open this page on claude.ai to read the dashboard data.",
+      needSignIn: "Open this page on claude.ai while signed in with an account it is shared with.",
+      lostLive: "Live updates disconnected. Reload the page to reconnect.", unknown: "Unknown error.",
+      ago: { now: "just now", m: (n) => `${n} min ago`, h: (n) => `${n} h ago`, d: (n) => `${n} d ago` }
+    },
+    vi: {
+      locale: "vi-VN",
+      sub: "Trạng thái các tính năng đang chạy theo quy trình P1 Spec → P6 Tổng kết, ở mọi dự án. Claude cập nhật sau mỗi lần chuyển bước; mục viền vàng hoặc đỏ đang chờ bạn.",
+      summaryAria: "Tổng quan", filterAria: "Lọc theo dự án",
+      loadingTitle: "Đang tải dữ liệu…", loadingText: "Nếu trang dừng ở đây, hãy mở trang trên claude.ai khi đã đăng nhập bằng tài khoản được chia sẻ.",
+      phases: ["Spec", "Plan", "Build", "Tích hợp", "Hardening", "Tổng kết"],
+      status: { todo: "Chưa bắt đầu", in_progress: "Đang làm", waiting_review: "Chờ duyệt", blocked: "Bị chặn", done: "Hoàn thành" },
+      needsYou: "Cần bạn", waiting: "chờ duyệt", blocked: "bị chặn",
+      inProgress: "Đang làm", notStarted: "chưa bắt đầu",
+      done: "Hoàn thành", ofFeatures: (n) => `trên ${n} tính năng`,
+      projects: "Dự án", tracked: "đang theo dõi",
+      all: "Tất cả", hideDone: "Ẩn tính năng đã xong", step: "Bước",
+      tasks: "Task", openBugs: "Bug mở", rounds: "Vòng", none: "Chưa có.",
+      blockedPrefix: "Bị chặn: ", report: "Tổng kết", bugs: "Bug", round: (n) => `vòng ${n}/3`,
+      approvals: "Duyệt", notYet: "chưa", gates: ["Spec (P1)", "Plan (P2)", "Tổng kết (P6)"],
+      inRepo: "Trong repo", log: "Nhật ký", pr: "Pull request",
+      quick: "nhanh", quickTitle: "Chế độ nhanh: spec/plan trong chat, bỏ P5",
+      emptyTitle: "Chưa có tính năng nào",
+      emptyText: "Khi Claude bắt đầu P1 cho một tính năng ở bất kỳ dự án nào theo dev-workflow, tính năng đó sẽ hiện ở đây với bước hiện tại, task, kết quả test và bug.",
+      noMatchTitle: "Không có tính năng khớp bộ lọc", noMatchText: "Chọn \"Tất cả\" hoặc bỏ \"Ẩn tính năng đã xong\".",
+      failTitle: "Không đọc được dữ liệu",
+      needClaude: "Trang này cần mở trên claude.ai để đọc dữ liệu dashboard.",
+      needSignIn: "Mở trang trên claude.ai khi đã đăng nhập bằng tài khoản được chia sẻ quyền xem.",
+      lostLive: "Mất kết nối dữ liệu trực tiếp. Tải lại trang để kết nối lại.", unknown: "Lỗi không xác định.",
+      ago: { now: "vừa xong", m: (n) => `${n} phút trước`, h: (n) => `${n} giờ trước`, d: (n) => `${n} ngày trước` }
+    }
   };
+  const T = I18N[LANG];
+  document.documentElement.lang = LANG;
+
+  const PHASES = ["P1", "P2", "P3", "P4", "P5", "P6"].map((id, i) => [id, T.phases[i]]);
   const ORDER = { blocked: 0, waiting_review: 1, in_progress: 2, todo: 3, done: 4 };
 
   const state = { projects: {}, features: [], filter: "all", hideDone: false, open: new Set(), loaded: { p: false, f: false } };
@@ -178,20 +226,27 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
   const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const arr = (v) => (Array.isArray(v) ? v : []);
   const num = (v) => (typeof v === "number" && isFinite(v) ? v : 0);
+  const safeUrl = (u) => (typeof u === "string" && /^https:\/\//.test(u) ? u : "");
+
+  $("sub").textContent = T.sub;
+  $("summary").setAttribute("aria-label", T.summaryAria);
+  $("filters").setAttribute("aria-label", T.filterAria);
+  $("loadingTitle").textContent = T.loadingTitle;
+  $("loadingText").textContent = T.loadingText;
 
   function ago(iso) {
     const t = Date.parse(iso);
     if (!t) return "";
     const s = Math.max(0, (Date.now() - t) / 1000);
-    if (s < 60) return "vừa xong";
-    if (s < 3600) return Math.floor(s / 60) + " phút trước";
-    if (s < 86400) return Math.floor(s / 3600) + " giờ trước";
-    if (s < 86400 * 30) return Math.floor(s / 86400) + " ngày trước";
-    return new Date(t).toLocaleDateString("vi-VN");
+    if (s < 60) return T.ago.now;
+    if (s < 3600) return T.ago.m(Math.floor(s / 60));
+    if (s < 86400) return T.ago.h(Math.floor(s / 3600));
+    if (s < 86400 * 30) return T.ago.d(Math.floor(s / 86400));
+    return new Date(t).toLocaleDateString(T.locale);
   }
   function stamp(iso) {
     const t = Date.parse(iso);
-    return t ? new Date(t).toLocaleString("vi-VN", { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }) : "";
+    return t ? new Date(t).toLocaleString(T.locale, { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }) : "";
   }
 
   function visible() {
@@ -206,10 +261,10 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
     const c = (s) => fs.filter((f) => f.status === s).length;
     const attn = c("waiting_review") + c("blocked");
     $("summary").innerHTML = [
-      `<div class="stat${attn ? " attn" : ""}"><span class="label">Cần bạn</span><b>${attn}</b><span class="note">${c("waiting_review")} chờ duyệt · ${c("blocked")} bị chặn</span></div>`,
-      `<div class="stat"><span class="label">Đang làm</span><b>${c("in_progress")}</b><span class="note">${c("todo")} chưa bắt đầu</span></div>`,
-      `<div class="stat"><span class="label">Hoàn thành</span><b>${c("done")}</b><span class="note">trên ${fs.length} tính năng</span></div>`,
-      `<div class="stat"><span class="label">Dự án</span><b>${Object.keys(state.projects).length || new Set(fs.map((f) => f.project)).size}</b><span class="note">đang theo dõi</span></div>`
+      `<div class="stat${attn ? " attn" : ""}"><span class="label">${T.needsYou}</span><b>${attn}</b><span class="note">${c("waiting_review")} ${T.waiting} · ${c("blocked")} ${T.blocked}</span></div>`,
+      `<div class="stat"><span class="label">${T.inProgress}</span><b>${c("in_progress")}</b><span class="note">${c("todo")} ${T.notStarted}</span></div>`,
+      `<div class="stat"><span class="label">${T.done}</span><b>${c("done")}</b><span class="note">${T.ofFeatures(fs.length)}</span></div>`,
+      `<div class="stat"><span class="label">${T.projects}</span><b>${Object.keys(state.projects).length || new Set(fs.map((f) => f.project)).size}</b><span class="note">${T.tracked}</span></div>`
     ].join("");
   }
 
@@ -220,18 +275,18 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
     if (state.filter !== "all" && !ids.includes(state.filter)) state.filter = "all";
     const chip = (id, label, n) => `<button class="chip" type="button" data-f="${esc(id)}" aria-pressed="${state.filter === id}">${esc(label)} <span class="n">${n}</span></button>`;
     $("filters").innerHTML =
-      chip("all", "Tất cả", state.features.length) +
+      chip("all", T.all, state.features.length) +
       ids.map((id) => {
         const p = state.projects[id];
         const label = (p && p.name ? p.name : id) + (p && p.profile ? " · " + p.profile : "");
         return chip(id, label, counts[id] || 0);
       }).join("") +
-      `<span class="spacer"></span><label class="toggle"><input type="checkbox" id="hideDone"${state.hideDone ? " checked" : ""}> Ẩn tính năng đã xong</label>`;
+      `<span class="spacer"></span><label class="toggle"><input type="checkbox" id="hideDone"${state.hideDone ? " checked" : ""}> ${T.hideDone}</label>`;
   }
 
   function track(f) {
     const cur = PHASES.findIndex((p) => p[0] === f.phase);
-    return `<div class="track" aria-label="Bước ${esc(f.phase || "")}">` + PHASES.map(([id, name], i) => {
+    return `<div class="track" aria-label="${T.step} ${esc(f.phase || "")}">` + PHASES.map(([id, name], i) => {
       let cls = "seg";
       if (f.status === "done" || (cur >= 0 && i < cur)) cls += " past";
       else if (i === cur) cls += " cur s-" + esc(f.status);
@@ -243,40 +298,41 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
     const t = f.tests || {};
     const out = [];
     const tasks = arr(f.tasks);
-    if (tasks.length) out.push(`<span class="kv"><span class="label">Task</span><span class="v">${tasks.filter((x) => x.status === "done").length}/${tasks.length}</span></span>`);
+    if (tasks.length) out.push(`<span class="kv"><span class="label">${T.tasks}</span><span class="v">${tasks.filter((x) => x.status === "done").length}/${tasks.length}</span></span>`);
     if (t.unit) out.push(`<span class="kv"><span class="label">Unit</span><span class="v ${num(t.unit.fail) ? "bad" : "ok"}">${num(t.unit.pass)}✓ ${num(t.unit.fail)}✗</span></span>`);
     if (t.p4) out.push(`<span class="kv"><span class="label">P4</span><span class="v ${num(t.p4.fail) ? "bad" : num(t.p4.warn) ? "warn" : "ok"}">${num(t.p4.pass)}/${num(t.p4.total) || num(t.p4.pass) + num(t.p4.fail) + num(t.p4.warn)}${num(t.p4.warn) ? " · " + num(t.p4.warn) + " warn" : ""}</span></span>`);
     const p5 = arr(t.p5);
     if (p5.length) out.push(`<span class="kv"><span class="label">P5</span><span class="v ${p5.some((r) => r.result === "fail") ? "bad" : "ok"}">${p5.filter((r) => r.result === "pass").length}/${p5.length}</span></span>`);
     const openBugs = arr(f.bugs).filter((b) => b.status !== "fixed" && b.status !== "accepted").length;
-    if (arr(f.bugs).length) out.push(`<span class="kv"><span class="label">Bug mở</span><span class="v ${openBugs ? "bad" : "ok"}">${openBugs}</span></span>`);
-    if (num(f.loops)) out.push(`<span class="kv"><span class="label">Vòng</span><span class="v">${num(f.loops)}</span></span>`);
+    if (arr(f.bugs).length) out.push(`<span class="kv"><span class="label">${T.openBugs}</span><span class="v ${openBugs ? "bad" : "ok"}">${openBugs}</span></span>`);
+    if (num(f.loops)) out.push(`<span class="kv"><span class="label">${T.rounds}</span><span class="v">${num(f.loops)}</span></span>`);
     return out.join("");
   }
 
   function list(items, fn) {
-    return items.length ? `<ul class="items">${items.map(fn).join("")}</ul>` : `<p class="note">Chưa có.</p>`;
+    return items.length ? `<ul class="items">${items.map(fn).join("")}</ul>` : `<p class="note">${T.none}</p>`;
   }
 
   function detail(f) {
     const t = f.tests || {};
     const g = f.gates || {};
     const parts = [];
-    if (f.status === "blocked" && f.blockedReason) parts.push(`<div class="blocked-box">Bị chặn: ${esc(f.blockedReason)}</div>`);
-    if (f.report) parts.push(`<div class="report-box"><span class="label">Tổng kết</span>\n${esc(f.report)}</div>`);
-    parts.push(`<div class="block"><h3 class="label">Task</h3>${list(arr(f.tasks), (x) =>
+    if (f.status === "blocked" && f.blockedReason) parts.push(`<div class="blocked-box">${T.blockedPrefix}${esc(f.blockedReason)}</div>`);
+    if (f.report) parts.push(`<div class="report-box"><span class="label">${T.report}</span>\n${esc(f.report)}</div>`);
+    parts.push(`<div class="block"><h3 class="label">${T.tasks}</h3>${list(arr(f.tasks), (x) =>
       `<li><span class="dot d-${esc(x.status)}" title="${esc(x.status)}"></span><span class="t"><span class="id">${esc(x.id)}</span> ${esc(x.title)}</span>${x.tag ? `<span class="tag">${esc(x.tag)}</span>` : "<span></span>"}</li>`)}</div>`);
-    parts.push(`<div class="block"><h3 class="label">Bug</h3>${list(arr(f.bugs), (b) =>
-      `<li><span class="dot d-${esc(b.status)}" title="${esc(b.status)}"></span><span class="t"><span class="id">${esc(b.id)}</span> ${esc(b.title)}</span><span class="id">vòng ${num(b.loop)}/3</span></li>`)}</div>`);
+    parts.push(`<div class="block"><h3 class="label">${T.bugs}</h3>${list(arr(f.bugs), (b) =>
+      `<li><span class="dot d-${esc(b.status)}" title="${esc(b.status)}"></span><span class="t"><span class="id">${esc(b.id)}</span> ${esc(b.title)}</span><span class="id">${T.round(num(b.loop))}</span></li>`)}</div>`);
     parts.push(`<div class="block"><h3 class="label">Hardening (P5)</h3>${list(arr(t.p5), (r) =>
       `<li><span class="dot d-${esc(r.result)}" title="${esc(r.result)}"></span><span class="t"><span class="id">${esc(r.id)}</span> ${esc(r.name)}</span><span class="mono">${esc(r.metric)}</span></li>`)}</div>`);
-    const gate = (k, name) => `<li><span class="dot ${g[k] ? "d-done" : ""}"></span><span class="t">${name}</span><span class="mono">${g[k] ? esc(stamp(g[k])) : "chưa"}</span></li>`;
-    parts.push(`<div class="block"><h3 class="label">Duyệt</h3><ul class="items">${gate("spec", "Spec (P1)")}${gate("plan", "Plan (P2)")}${gate("report", "Tổng kết (P6)")}</ul></div>`);
+    const gate = (k, name) => `<li><span class="dot ${g[k] ? "d-done" : ""}"></span><span class="t">${name}</span><span class="mono">${g[k] ? esc(stamp(g[k])) : T.notYet}</span></li>`;
+    parts.push(`<div class="block"><h3 class="label">${T.approvals}</h3><ul class="items">${gate("spec", T.gates[0])}${gate("plan", T.gates[1])}${gate("report", T.gates[2])}</ul></div>`);
     const paths = [["Branch", f.branch], ["Spec", f.specPath], ["Plan", f.planPath]].filter((p) => p[1]);
-    if (paths.length) parts.push(`<div class="block"><h3 class="label">Trong repo</h3><div class="paths">${paths.map(([k, v]) => `<div><span class="label">${k}</span> <span class="mono">${esc(v)}</span></div>`).join("")}</div></div>`);
+    const pr = safeUrl(f.prUrl);
+    if (paths.length || pr) parts.push(`<div class="block"><h3 class="label">${T.inRepo}</h3><div class="paths">${paths.map(([k, v]) => `<div><span class="label">${k}</span> <span class="mono">${esc(v)}</span></div>`).join("")}${pr ? `<div><span class="label">${T.pr}</span> <a class="mono" href="${esc(pr)}" target="_blank" rel="noopener">${esc(pr)}</a></div>` : ""}</div></div>`);
     const log = arr(f.log).slice().sort((a, b) => (Date.parse(b.at) || 0) - (Date.parse(a.at) || 0)).slice(0, 20);
-    parts.push(`<div class="block"><h3 class="label">Nhật ký</h3>${log.length ? `<ul class="items log">${log.map((e) =>
-      `<li><span class="mono">${esc(stamp(e.at))}</span><span class="tag">${esc(e.phase)}</span><span class="t">${esc(e.text)}</span></li>`).join("")}</ul>` : `<p class="note">Chưa có.</p>`}</div>`);
+    parts.push(`<div class="block"><h3 class="label">${T.log}</h3>${log.length ? `<ul class="items log">${log.map((e) =>
+      `<li><span class="mono">${esc(stamp(e.at))}</span><span class="tag">${esc(e.phase)}</span><span class="t">${esc(e.text)}</span></li>`).join("")}</ul>` : `<p class="note">${T.none}</p>`}</div>`);
     return `<div class="detail">${parts.join("")}</div>`;
   }
 
@@ -285,11 +341,11 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
     if (!state.loaded.f) return;
     const fs = visible();
     if (!state.features.length) {
-      el.innerHTML = `<div class="empty"><h2>Chưa có tính năng nào</h2><p>Khi Claude bắt đầu P1 cho một tính năng ở bất kỳ dự án nào theo dev-workflow, tính năng đó sẽ hiện ở đây với bước hiện tại, task, kết quả test và bug.</p></div>`;
+      el.innerHTML = `<div class="empty"><h2>${T.emptyTitle}</h2><p>${T.emptyText}</p></div>`;
       return;
     }
     if (!fs.length) {
-      el.innerHTML = `<div class="empty"><h2>Không có tính năng khớp bộ lọc</h2><p>Chọn "Tất cả" hoặc bỏ "Ẩn tính năng đã xong".</p></div>`;
+      el.innerHTML = `<div class="empty"><h2>${T.noMatchTitle}</h2><p>${esc(T.noMatchText)}</p></div>`;
       return;
     }
     el.innerHTML = fs.map((f) => {
@@ -298,10 +354,10 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
       return `<article class="row s-${esc(f.status)}">
         <button class="row-head" type="button" data-id="${esc(f._id)}" aria-expanded="${open}">
           <div style="min-width:0">
-            <div class="title-line"><span class="proj">${esc(proj && proj.name ? proj.name : f.project)}</span><span class="ftitle">${esc(f.title || f.slug || f._id)}</span>${f.mode === "quick" ? `<span class="tag" title="Chế độ nhanh: spec/plan trong chat, bỏ P5">nhanh</span>` : ""}</div>
+            <div class="title-line"><span class="proj">${esc(proj && proj.name ? proj.name : f.project)}</span><span class="ftitle">${esc(f.title || f.slug || f._id)}</span>${f.mode === "quick" ? `<span class="tag" title="${esc(T.quickTitle)}">${T.quick}</span>` : ""}</div>
             <div class="summary-line">${esc(f.summary || "")}</div>
           </div>
-          <div class="right"><span class="pill p-${esc(f.status)}">${esc(STATUS[f.status] || f.status || "—")}</span><span class="when" title="${esc(f.updatedAt)}">${esc(ago(f.updatedAt))}</span></div>
+          <div class="right"><span class="pill p-${esc(f.status)}">${esc(T.status[f.status] || f.status || "—")}</span><span class="when" title="${esc(f.updatedAt)}">${esc(ago(f.updatedAt))}</span></div>
           <div class="meta">${track(f)}${testsSummary(f)}</div>
         </button>
         ${open ? detail(f) : ""}
@@ -312,6 +368,7 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
   function render() { renderSummary(); renderFilters(); renderList(); }
 
   document.addEventListener("click", (e) => {
+    if (e.target.closest("a")) return;
     const chip = e.target.closest(".chip");
     if (chip) {
       state.filter = chip.dataset.f;
@@ -335,20 +392,20 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
   });
 
   function fail(msg) {
-    $("list").innerHTML = `<div class="empty"><h2>Không đọc được dữ liệu</h2><p>${esc(msg)}</p></div>`;
+    $("list").innerHTML = `<div class="empty"><h2>${T.failTitle}</h2><p>${esc(msg)}</p></div>`;
   }
 
   async function start() {
     if (!window.claude || typeof window.claude.use !== "function") {
-      fail("Trang này cần mở trên claude.ai để đọc dữ liệu dashboard.");
+      fail(T.needClaude);
       return;
     }
     const db = await window.claude.use("db");
     if (!db) {
-      fail("Mở trang trên claude.ai khi đã đăng nhập bằng tài khoản được chia sẻ quyền xem.");
+      fail(T.needSignIn);
       return;
     }
-    const onErr = (e) => { if (e && e.code !== "unavailable") $("note").textContent = "Mất kết nối dữ liệu trực tiếp. Tải lại trang để kết nối lại."; };
+    const onErr = (e) => { if (e && e.code !== "unavailable") $("note").textContent = T.lostLive; };
     db.collection("projects").onSnapshot((snap) => {
       const m = {};
       snap.docs.forEach((d) => { const v = d.data(); if (v) m[d.id] = v; });
@@ -365,6 +422,6 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
   }
 
   render();
-  start().catch((e) => fail((e && e.message) || "Lỗi không xác định."));
+  start().catch((e) => fail((e && e.message) || T.unknown));
 })();
 </script>

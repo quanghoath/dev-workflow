@@ -1,22 +1,22 @@
 ---
 name: status
-description: Show where every dev-workflow feature in this repo stands - mode, current step, tasks, tests, open bugs, what is blocking and the next action - read from docs/superpowers/runs/*/status.json, no dashboard needed. Use when the user asks "status", "đang làm tới đâu", "tiếp tục tính năng dở", or opens a new session on a repo that uses dev-workflow. / Xem tiến độ các tính năng.
+description: Show where every dev-workflow feature in this repo stands - mode, current step, tasks, tests, open bugs, blockers, pull request and the next action - read from docs/superpowers/runs/*/status.json, no dashboard needed. Use when the user asks for status, progress, "what's next", "đang làm tới đâu", wants to resume unfinished work, or opens a new session on a repo that uses dev-workflow. / Xem tiến độ các tính năng.
 ---
 
-# dev-workflow · Xem tiến độ
+# dev-workflow · Status
 
-Chỉ đọc. Không sửa file, không ghi dashboard.
+Read only. Do not edit files or write to the dashboard. Answer in the user's language.
 
-## Các bước
+## Steps
 
-1. Đọc `docs/workflow-config.md` (tên dự án, `dashboard_url`). Không có file này thì báo repo chưa init và gợi ý `/dev-workflow:init`.
-2. Liệt kê `docs/superpowers/runs/*/status.json`. Với mỗi file, lấy `title`, `mode`, `phase`, `status`, `summary`, số task xong / tổng, `tests`, bug chưa đóng (`status` khác `fixed` và `accepted`), `blockedReason`, `updatedAt`.
-   - Thư mục `runs/<slug>/` có nhưng thiếu `status.json` (tính năng làm trước v1.4): suy ra bước từ file có mặt — chỉ có spec → P1; có plan + `TEST-PLAN.md` → P2/P3 (đếm checkbox `- [x]` trong plan); `TEST-PLAN.md` có cột Kết quả đã điền → P4/P5; có `REPORT.md` → P6. Ghi rõ là "suy ra".
-3. Nếu người dùng hỏi một tính năng cụ thể (slug hoặc tên): đọc thêm plan, `TEST-PLAN.md`, `bugs/*.md` của tính năng đó.
-4. Trả lời ngắn, theo thứ tự cần người dùng trước:
-   - **Cần bạn:** tính năng `waiting_review` (đang chờ duyệt gì) và `blocked` (lý do).
-   - **Đang làm:** `in_progress`, bước hiện tại, task x/y, bug mở.
-   - **Xong gần đây:** `done` trong 7 ngày.
-   - Mỗi tính năng chưa xong kèm **bước tiếp theo** và câu lệnh để tiếp tục, ví dụ `/dev-workflow:run tiếp tục <slug>`.
-   - Có `dashboard_url` khác `none` thì kèm link.
-5. Không có tính năng nào: nói vậy và gợi ý `/dev-workflow:run <mô tả>`.
+1. Read `docs/workflow-config.md` (project name, `dashboard_url`). If it is missing, say the repo is not set up and suggest `/dev-workflow:init`.
+2. List `docs/superpowers/runs/*/status.json`. For each, take `title`, `mode`, `phase`, `status`, `summary`, tasks done / total, `tests`, open bugs (`status` other than `fixed` and `accepted`), `blockedReason`, `prUrl`, `updatedAt`.
+   - A `runs/<slug>/` folder without `status.json` (features started before v1.4): infer the step from the files present — spec only → P1; plan + `TEST-PLAN.md` → P2/P3 (count `- [x]` checkboxes in the plan); `TEST-PLAN.md` with results filled → P4/P5; `REPORT.md` → P6. Say that it is inferred.
+3. If the user asks about one feature (slug or name), also read its plan, `TEST-PLAN.md` and `bugs/*.md`.
+4. Answer briefly, things that need the user first:
+   - **Needs you:** `waiting_review` (what is waiting for approval) and `blocked` (why).
+   - **In progress:** `in_progress`, current step, tasks x/y, open bugs.
+   - **Recently done:** `done` in the last 7 days, with the PR link if any.
+   - For every unfinished feature, the **next step** and the command to continue, e.g. `/dev-workflow:run continue <slug>`.
+   - Include the dashboard link when `dashboard_url` is not `none`.
+5. No features: say so and suggest `/dev-workflow:run <description>`.

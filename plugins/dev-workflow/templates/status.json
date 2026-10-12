@@ -1,14 +1,15 @@
 {
   "project": "<project>",
   "slug": "<slug>",
-  "title": "<tên tính năng>",
+  "title": "<feature name>",
   "mode": "full",
   "phase": "P1",
   "status": "in_progress",
-  "summary": "Đang viết spec",
+  "summary": "Writing spec",
   "specPath": null,
   "planPath": null,
   "branch": null,
+  "prUrl": null,
   "gates": { "spec": null, "plan": null, "report": null },
   "tasks": [],
   "tests": {},
@@ -17,5 +18,5 @@
   "blockedReason": null,
   "report": null,
   "log": [],
-  "updatedAt": "<ISO 8601, ví dụ 2026-10-12T09:30:00+07:00>"
+  "updatedAt": "<ISO 8601, e.g. 2026-10-12T09:30:00+07:00>"
 }

@@ -1,24 +1,24 @@
-<!-- Dán 2 mục này (và mục Hợp đồng API nếu FULLSTACK) vào cuối mỗi spec -->
+<!-- Paste these 2 sections (plus the API contract section if FULLSTACK) at the end of every spec -->
 
-## Tiêu chí nghiệm thu
+## Acceptance criteria
 
-| Mã | Khi (điều kiện + thao tác) | Thì (kết quả kiểm tra được) | Kiểm bằng |
+| ID | When (precondition + action) | Then (verifiable outcome) | Verified by |
 |---|---|---|---|
-| AC-1 | Khách đã đăng nhập, giỏ có 2 sản phẩm còn hàng, bấm "Đặt hàng" | Tạo 1 đơn trạng thái `PENDING`, tồn kho giảm đúng số lượng, chuyển sang trang "Đặt hàng thành công" | API e2e + UI |
+| AC-1 | Logged-in customer with 2 in-stock products in the cart clicks "Place order" | 1 order is created with status `PENDING`, stock drops by exactly the ordered quantities, the "Order placed" page is shown | API e2e + UI |
 | AC-2 | … | … | unit / API e2e / UI |
 
-## Rủi ro & hardening
+## Risks & hardening
 
-| Loại | Có? | Mã | Kịch bản + bất biến | Ngưỡng |
+| Type | Applies? | ID | Scenario + invariant | Threshold |
 |---|---|---|---|---|
-| Race condition | có | R-1 | Sản phẩm còn 1, 20 request đặt mua cùng lúc → đúng 1 thành công; tồn kho = 0, không âm | 3/3 lần đúng |
-| Tải cao | không | — | (lý do: trang quản trị nội bộ, < 10 người dùng đồng thời) | — |
-| Hiệu năng FE | có | R-2 | Trang danh sách đơn hàng 2.000 dòng | Lighthouse ≥ 80, LCP < 2.5 s |
-| Bảo mật / phân quyền | có | R-3 | Khách A gọi API xem đơn với id đơn của khách B → bị từ chối | 0 rò dữ liệu |
-| Dữ liệu lớn | không | — | — | — |
+| Race condition | yes | R-1 | Product has 1 left, 20 concurrent orders → exactly 1 succeeds; stock = 0, never negative | correct 3/3 runs |
+| High load | no | — | (reason: internal admin page, < 10 concurrent users) | — |
+| FE performance | yes | R-2 | Order list page with 2,000 rows | Lighthouse ≥ 80, LCP < 2.5 s |
+| Security / authorization | yes | R-3 | Customer A calls the order-details API with customer B's order id → denied | 0 data leaks |
+| Large data | no | — | — | — |
 
-## Hợp đồng API  <!-- chỉ FULLSTACK -->
+## API contract  <!-- FULLSTACK only -->
 
-| Endpoint | Request | Response thành công | Lỗi |
+| Endpoint | Request | Success response | Errors |
 |---|---|---|---|
-| `POST /api/orders` | `{ items: [{ productId: int, qty: int }] }` | `201 { id, status: "PENDING" }` | `409` khi hết hàng · `400` khi giỏ rỗng |
+| `POST /api/orders` | `{ items: [{ productId: int, qty: int }] }` | `201 { id, status: "PENDING" }` | `409` when out of stock · `400` when the cart is empty |

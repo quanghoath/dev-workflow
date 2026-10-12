@@ -1,62 +1,62 @@
-# REPORT · <tên tính năng>
+# REPORT · <feature name>
 
-- Slug: `<slug>` · Branch: `<branch>` · Ngày: YYYY-MM-DD
-- Spec / Plan / TEST-PLAN: `<đường dẫn>`
+- Slug: `<slug>` · Branch: `<branch>` · Date: YYYY-MM-DD
+- Spec / Plan / TEST-PLAN: `<path>`
 
-## Kết luận
+## Conclusion
 
-<2–3 câu: đã giao gì, có sẵn sàng merge không, còn điều kiện gì.>
+<2–3 sentences: what was delivered, whether it is ready to merge, any remaining conditions.>
 
-## Nghiệm thu
+## Acceptance
 
-| AC | Mô tả | Kết quả | Bằng chứng |
+| AC | Description | Result | Evidence |
 |---|---|---|---|
 | AC-1 | … | pass | `evidence/…` |
 
-## Số liệu test
+## Test results
 
-| Loại | Kết quả |
+| Type | Result |
 |---|---|
 | Unit | 42 pass / 0 fail |
-| P4 tích hợp | 8/8 pass (1 warn được chấp nhận: …) |
-| P5 race | R-1: 3/3 lần đúng 1/20 thành công |
-| P5 tải | p95 = … ms, lỗi = … % (ngưỡng …) |
+| P4 integration | 8/8 pass (1 accepted warn: …) |
+| P5 race | R-1: exactly 1/20 succeeded in 3/3 runs |
+| P5 load | p95 = … ms, errors = … % (threshold …) |
 | P5 FE | Lighthouse Perf … / A11y …, LCP … s |
 
-## Bug & vòng phản hồi
+## Bugs & feedback loops
 
-| BUG | Tiêu đề | Vòng | Kết cục |
+| BUG | Title | Loops | Outcome |
 |---|---|---|---|
 | BUG-001 | … | 2 | fixed |
 
-Tổng số lần quay về P3: N.
+Total returns to P3: N.
 
-## Thay đổi chính
+## Main changes
 
 - `<file/module>`: …
 
-## Rủi ro còn lại & việc đề xuất tiếp
+## Remaining risks & suggested follow-ups
 
 - …
 
-## Hướng dẫn kiểm tra lại cho người duyệt
+## How the reviewer can verify
 
 1. …
 
 ---
 
-<!-- Chế độ nhanh: chỉ dùng phần dưới đây, xoá các mục phía trên. -->
+<!-- Quick mode: use only the part below and delete the sections above. -->
 
-# Báo cáo nhanh · <tên việc>
+# Quick report · <task name>
 
-- Slug: `<slug>` · Branch: `<branch>` · Ngày: YYYY-MM-DD · Chế độ: quick
-- Mục tiêu: <1 câu>
+- Slug: `<slug>` · Branch: `<branch>` · Date: YYYY-MM-DD · Mode: quick
+- Goal: <1 sentence>
 
-| AC | Mô tả | Kiểm bằng | Kết quả |
+| AC | Description | Verified by | Result |
 |---|---|---|---|
-| AC-1 | … | unit `<tên test>` + UI/API `<kịch bản>` | pass |
+| AC-1 | … | unit `<test name>` + UI/API `<scenario>` | pass |
 
-- File đã sửa: `<file>` — …
-- Unit test: N pass / 0 fail · Build: xanh
-- Bug trong lúc làm: không / BUG-001 (fixed, 1 vòng)
-- Còn lại / lưu ý: …
+- Files changed: `<file>` — …
+- Unit tests: N pass / 0 fail · Build: green
+- Bugs during the work: none / BUG-001 (fixed, 1 loop)
+- Remaining / notes: …

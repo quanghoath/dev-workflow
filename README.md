@@ -2,26 +2,34 @@
 
 **Spec-to-ship workflow plugin for Claude Code.** Works for frontend-only, backend-only or full-stack projects. Built on [superpowers](https://github.com/obra/superpowers).
 
+[Tiếng Việt](README.vi.md)
+
 Claude takes each feature through 6 steps. You approve the spec, the plan and the final report; Claude does the rest:
 
 ```
 P1 Spec         acceptance criteria + risk list (race? load? perf?)        ◆ you approve
 P2 Plan         tasks [BE]/[FE]/[CONTRACT] + TEST-PLAN written before code ◆ you approve
 P3 Build        TDD per task → review → fix
-P4 Integration  UI via Chrome DevTools MCP · API end-to-end   ─┐ bug → fix loop
-P5 Hardening    race conditions · load (k6) · Lighthouse       ─┘ max 3 rounds/bug
-P6 Report       verification + code review + REPORT.md                    ◆ you approve
+P4 Integration  UI via Chrome DevTools MCP → saved as Playwright tests ─┐ bug → fix loop
+P5 Hardening    race conditions · load (k6) · Lighthouse                ─┘ max 3 rounds/bug
+P6 Report       verification + code review + REPORT.md + pull request     ◆ you approve
 ```
 
-Small fix? **Quick mode** keeps TDD and UI/API checks but puts the spec and plan in chat. `/dev-workflow:status` shows where every feature stands. Optional: a live status board on claude.ai. See a full [example run](examples/README.md).
+- **Quick mode** for small fixes: spec and plan in chat, still TDD and UI/API checks.
+- **AI explores, Playwright keeps:** UI scenarios that pass in Chrome are written as Playwright tests, so CI catches regressions.
+- **Pull request with evidence:** P6 opens a PR/MR whose description lists acceptance criteria, test numbers and fixed bugs.
+- **Never lose your place:** status lives in `status.json` in your repo; `/dev-workflow:status` and a session-start reminder tell you what is waiting for you.
+- Optional live dashboard on claude.ai.
+
+See a full [example run](examples/README.md) · Try the [demo shop](demo/README.md).
 
 ⭐ If this helps you, star the repo so others can find it. Issues and ideas are welcome.
 
----
+## Install
 
-## Cài đặt (3 bước)
+You need Claude Code and `git`.
 
-Cần: Claude Code và `git`.
+### Terminal (CLI)
 
 ```
 /plugin install superpowers@claude-plugins-official
@@ -29,33 +37,42 @@ Cần: Claude Code và `git`.
 /plugin install dev-workflow@dev-workflow
 ```
 
-Bản sao trên GitLab: `https://gitlab.com/beesky/dev-workflow.git` (dùng thay cho dòng thứ 2 nếu cần). Nếu lệnh đầu không tìm thấy superpowers, dùng `/plugin marketplace add obra/superpowers-marketplace` rồi `/plugin install superpowers@superpowers-marketplace`.
+If superpowers is not found, use `/plugin marketplace add obra/superpowers-marketplace` then `/plugin install superpowers@superpowers-marketplace`.
 
-## Sử dụng
+### VS Code extension (Manage plugins)
 
-1. Mở repo dự án, gõ `/dev-workflow:init`. Claude tự nhận diện dự án FE/BE/fullstack, ghi lệnh build/test, hỏi bạn có dùng dashboard không.
-2. Commit các file Claude vừa tạo. Dev khác clone repo về, bấm **Trust** là có plugin, không cần cài.
-3. Làm tính năng: *"làm tính năng X theo dev-workflow"* hoặc `/dev-workflow:run <mô tả>`. Việc nhỏ (sửa lỗi nhỏ, chỉnh UI) Claude sẽ đề xuất **chế độ nhanh**: spec và plan ngắn ngay trong chat, vẫn TDD và kiểm tra UI/API.
-4. Xem tiến độ hoặc tiếp tục việc dở ở phiên mới: `/dev-workflow:status`.
+1. In the Claude Code panel, type `/plugins` to open **Manage plugins**.
+2. **Marketplaces** tab → paste `quanghoath/dev-workflow` (or `https://github.com/quanghoath/dev-workflow.git`) and add it.
+3. **Plugins** tab → search `dev-workflow` → **Install** → choose **Install for you** (all your projects) or **Install for this project**.
+4. Install **superpowers** the same way if you do not have it (it is in the official marketplace, or add `obra/superpowers-marketplace`).
 
-Muốn xem đầu ra trông thế nào trước khi cài: [ví dụ chạy mẫu](examples/README.md).
+Changes apply to open sessions right away. To turn on auto-update, run `/plugin` in a terminal session → **Marketplaces** → `dev-workflow` → **Enable auto-update**.
 
-## Dashboard (tuỳ chọn)
+## Use
 
-- Lúc init chọn **tạo mới** (trang claude.ai thuộc tài khoản của bạn), **dán link có sẵn**, hoặc **không dùng**.
-- Muốn Claude của người khác ghi vào dashboard: share cho họ quyền **Editor**. Người ở **ngoài tổ chức claude.ai** của bạn hiện không ghi được, dù có quyền Editor; khi đó dùng chung gói claude.ai Team, hoặc mỗi người một dashboard.
-- Không bật link public cho dashboard.
+1. In your project, run `/dev-workflow:init`. Claude detects FE/BE/full-stack, verifies build/test commands, offers Playwright, and asks about the dashboard.
+2. Commit the files it creates. Teammates who clone the repo and trust the folder get the plugin automatically.
+3. Build: *"build X with dev-workflow"* or `/dev-workflow:run <description>`. For small fixes Claude offers quick mode.
+4. See progress or resume in a new session: `/dev-workflow:status`.
 
-## Tài liệu
+## Dashboard (optional)
 
-| File | Nội dung |
+- At init choose **create new** (a claude.ai page in your account), **paste an existing link**, or **none**.
+- To let teammates' Claude write to it, share it with them as **Editor**. People outside your claude.ai organization currently cannot write even as Editor; use a shared claude.ai Team plan or one dashboard per person. Status is always kept in the repo either way.
+- Do not enable public link sharing on the dashboard.
+
+## Docs
+
+| File | What it covers |
 |---|---|
-| [02-quy-trinh.md](plugins/dev-workflow/reference/02-quy-trinh.md) | Chi tiết P0–P6, vòng sửa lỗi, khi nào Claude dừng chờ bạn |
-| [04-quy-trinh-test.md](plugins/dev-workflow/reference/04-quy-trinh-test.md) | Test từng bước: unit, API, UI, race, tải, hiệu năng |
-| [01-ho-so-du-an.md](plugins/dev-workflow/reference/01-ho-so-du-an.md) | Công cụ test theo stack và ngưỡng mặc định |
-| [03-dashboard.md](plugins/dev-workflow/reference/03-dashboard.md) | Dữ liệu dashboard và cách Claude cập nhật |
-| [templates/](plugins/dev-workflow/templates/) | Mẫu spec, TEST-PLAN, BUG, REPORT, config |
+| [02-workflow.md](plugins/dev-workflow/reference/02-workflow.md) | P0–P6 in detail, quick mode, feedback loop, when Claude stops for you |
+| [04-testing-guide.md](plugins/dev-workflow/reference/04-testing-guide.md) | Step-by-step testing: unit, API, UI, Playwright, race, load, performance |
+| [01-project-profiles.md](plugins/dev-workflow/reference/01-project-profiles.md) | Test tools per stack and default thresholds |
+| [03-dashboard.md](plugins/dev-workflow/reference/03-dashboard.md) | Status data and how Claude updates the dashboard |
+| [templates/](plugins/dev-workflow/templates/) | Spec addendum, TEST-PLAN, BUG, REPORT, PR body, config |
 
-## Đóng góp
+Vietnamese versions: `reference/vi/`, `templates/vi/`, `examples/vi/`.
 
-Sửa trong `plugins/dev-workflow/`, tăng `version` trong `plugin.json`, gửi Pull Request trên [GitHub](https://github.com/quanghoath/dev-workflow). Lịch sử thay đổi: [CHANGELOG.md](CHANGELOG.md). Giấy phép: [MIT](LICENSE).
+## Contributing
+
+Edit files under `plugins/dev-workflow/`, bump `version` in `plugin.json`, open a pull request on [GitHub](https://github.com/quanghoath/dev-workflow). History: [CHANGELOG.md](CHANGELOG.md). License: [MIT](LICENSE).

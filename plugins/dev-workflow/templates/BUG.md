@@ -1,30 +1,30 @@
-# BUG-NNN · <tiêu đề ngắn>
+# BUG-NNN · <short title>
 
-- **Phát hiện ở:** P4 / P5 · kịch bản `<ID>` · AC/R liên quan: `<AC-n / R-n>`
-- **Mức:** fail / warn
-- **Trạng thái:** open · loop 1/3   <!-- open | fixed | blocked | needs_redesign | accepted(warn) -->
+- **Found in:** P4 / P5 · scenario `<ID>` · related AC/R: `<AC-n / R-n>`
+- **Severity:** fail / warn
+- **Status:** open · loop 1/3   <!-- open | fixed | blocked | needs_redesign | accepted(warn) -->
 
-## Tái hiện
+## Reproduce
 
 1. …
 2. …
 
-**Mong đợi:** …
-**Thực tế:** …
-**Bằng chứng:** `evidence/…` (ảnh, console, network, số liệu)
+**Expected:** …
+**Actual:** …
+**Evidence:** `evidence/…` (screenshot, console, network, metrics)
 
-## Nguyên nhân gốc  <!-- điền sau systematic-debugging, trước khi sửa -->
+## Root cause  <!-- fill in after systematic-debugging, before fixing -->
 
 …
 
-## Sửa
+## Fix
 
-- Test tái hiện: `<file test>::<tên test>` (đỏ trước khi sửa, xanh sau khi sửa)
-- Thay đổi: `<file>` — …
-- Đã chạy lại: `<ID kịch bản>` → pass
+- Reproduction test: `<test file>::<test name>` (red before the fix, green after)
+- Change: `<file>` — …
+- Re-ran: `<scenario ID>` → pass
 
-## Lịch sử vòng
+## Loop history
 
-| Loop | Giả thuyết | Kết quả |
+| Loop | Hypothesis | Result |
 |---|---|---|
 | 1 | … | … |

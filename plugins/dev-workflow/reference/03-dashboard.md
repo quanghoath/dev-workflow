@@ -1,35 +1,35 @@
-# 03 · Dashboard trạng thái
+# 03 · Status dashboard
 
-Dashboard là một trang trên claude.ai. Trang chỉ hiển thị; Claude là bên ghi dữ liệu qua tool `ArtifactData`. Một dashboard dùng được cho nhiều dự án: mỗi team thường dùng chung một trang.
+The dashboard is a page on claude.ai. The page only displays data; Claude writes the data through the `ArtifactData` tool. One dashboard can serve many projects: each team usually shares one page.
 
-- **URL:** lấy từ `dashboard_url` trong `docs/workflow-config.md` của dự án. Plugin không có URL mặc định.
-  - `dashboard_url: none` → bỏ mọi bước cập nhật dashboard; quy trình vẫn chạy đủ.
-  - Thiếu hoặc trống → chạy `dev-workflow:init` để chọn (xem mục "Chọn hoặc tạo dashboard").
-- **Quyền:** mọi người được chia sẻ đều đọc được. Chỉ **Owner/Editor** ghi được (rule `write: admin`). Tài khoản claude.ai trên máy nào cần ghi trạng thái thì phải được chia sẻ quyền **Editor**; Viewer và Contributor chỉ xem được. Không bật link public: người vào bằng link chỉ xem, và khi bật link thì các Editor ngoài tổ chức mất quyền ghi.
-- **Mã nguồn trang:** `${CLAUDE_PLUGIN_ROOT}/dashboard/index.html`.
+- **URL:** taken from `dashboard_url` in the project's `docs/workflow-config.md`. The plugin has no default URL.
+  - `dashboard_url: none` → skip every dashboard update step; the workflow still runs in full.
+  - Missing or empty → run `dev-workflow:init` to choose one (see "Choose or create a dashboard").
+- **Permissions:** everyone it is shared with can read. Only **Owner/Editor** can write (rule `write: admin`). The claude.ai account on any machine that needs to write status must be shared with **Editor** access; Viewer and Contributor can only view. Do not turn on the public link: people who open it via the link can only view, and when the link is on, Editors outside the organization lose write access.
+- **Page source:** `${CLAUDE_PLUGIN_ROOT}/dashboard/index.html`.
 
-## Chọn hoặc tạo dashboard (ở P0)
+## Choose or create a dashboard (in P0)
 
-Hỏi người dùng một câu, ba lựa chọn:
+Ask the user one question with three options:
 
-1. **Dùng dashboard có sẵn:** người dùng dán link `https://claude.ai/artifact/...`. Kiểm tra bằng `ArtifactData list` collection `projects` (đọc được là link đúng). Nếu bước ghi `projects/<project>` sau đó bị từ chối, báo người dùng cần xin quyền Editor từ chủ dashboard.
-2. **Tạo dashboard mới** (thuộc tài khoản claude.ai đang dùng):
-   1. Copy `${CLAUDE_PLUGIN_ROOT}/dashboard/index.html` vào thư mục scratchpad của phiên (tool Artifact chỉ publish file trong thư mục làm việc hoặc scratchpad).
-   2. Publish bằng tool `Artifact`: `file_path` = bản copy, `icon: "kanban"`, `description: "Trạng thái các tính năng theo quy trình dev-workflow P1–P6"`, `capabilities: {"db": {"rules": [{"path": "", "read": "view", "write": "admin"}]}}`.
-   3. Ghi URL trả về vào `dashboard_url`. Nhắc người dùng share trang cho team với quyền Editor (không bật link public).
-3. **Không dùng dashboard:** ghi `dashboard_url: none`.
+1. **Use an existing dashboard:** the user pastes a `https://claude.ai/artifact/...` link. Check it with `ArtifactData list` on the `projects` collection (if it reads, the link is correct). If the later write to `projects/<project>` is rejected, tell the user they need to request Editor access from the dashboard owner.
+2. **Create a new dashboard** (owned by the current claude.ai account):
+   1. Copy `${CLAUDE_PLUGIN_ROOT}/dashboard/index.html` into the session's scratchpad directory (the Artifact tool only publishes files in the working directory or the scratchpad).
+   2. Publish with the `Artifact` tool: `file_path` = the copy, `icon: "kanban"`, `description: "Feature status across the dev-workflow P1–P6 steps"`, `capabilities: {"db": {"rules": [{"path": "", "read": "view", "write": "admin"}]}}`.
+   3. Write the returned URL to `dashboard_url`. Remind the user to share the page with the team as Editor (do not turn on the public link).
+3. **No dashboard:** write `dashboard_url: none`.
 
-Không có tool `Artifact` / `ArtifactData` (ví dụ chưa đăng nhập claude.ai) thì chỉ còn lựa chọn 3, kèm ghi chú để bật sau.
+If the `Artifact` / `ArtifactData` tools are not available (for example not signed in to claude.ai), only option 3 remains, with a note to turn it on later.
 
-**Cập nhật giao diện dashboard đã có:** publish lại bản `index.html` mới bằng tool `Artifact` với `url` = `dashboard_url` (đọc trang trước theo yêu cầu của tool). **Không** truyền `capabilities` để giữ rule cũ. Dữ liệu được giữ nguyên qua các lần publish. Không publish thành trang mới.
+**Update the UI of an existing dashboard:** republish the new `index.html` with the `Artifact` tool with `url` = `dashboard_url` (read the page first, as the tool requires). Do **not** pass `capabilities`, so the existing rules are kept. Data is preserved across publishes. Do not publish it as a new page.
 
-## Dữ liệu
+## Data
 
-Hai collection:
+Two collections:
 
-### `projects` — 1 document / dự án
+### `projects` — 1 document per project
 
-`doc_id` = `project` trong `workflow-config.md` (kebab-case, ví dụ `shop-api`).
+`doc_id` = `project` in `workflow-config.md` (kebab-case, for example `shop-api`).
 
 ```json
 {
@@ -41,43 +41,43 @@ Hai collection:
 }
 ```
 
-### `features` — 1 document / tính năng
+### `features` — 1 document per feature
 
-`doc_id` = `<project>--<slug>` (ví dụ `shop-api--dat-hang`).
+`doc_id` = `<project>--<slug>` (for example `shop-api--place-order`).
 
 ```json
 {
   "project": "shop-api",
-  "slug": "dat-hang",
-  "mode": "full",                // full | quick (xem 02-quy-trinh.md)
-  "title": "Đặt hàng và trừ tồn kho",
+  "slug": "place-order",
+  "mode": "full",                // full | quick (see 02-workflow.md)
+  "title": "Place order and decrement stock",
   "phase": "P3",                 // P1..P6
-  "status": "in_progress",       // xem bảng trạng thái
-  "summary": "Đang làm task 4/9: OrderService trừ tồn kho",   // 1 dòng, người đọc hiểu ngay
-  "specPath": "docs/superpowers/specs/2026-10-12-dat-hang-design.md",
-  "planPath": "docs/superpowers/plans/2026-10-12-dat-hang.md",
-  "branch": "feat/dat-hang",
-  "gates": {                     // thời điểm người duyệt đồng ý
+  "status": "in_progress",       // see the status table
+  "summary": "Working on task 4/9: OrderService decrements stock",   // 1 line, readable at a glance
+  "specPath": "docs/superpowers/specs/2026-10-12-place-order-design.md",
+  "planPath": "docs/superpowers/plans/2026-10-12-place-order.md",
+  "branch": "feat/place-order",
+  "gates": {                     // when the reviewer approved
     "spec": "2026-10-12T10:00:00+07:00",
     "plan": null,
     "report": null
   },
   "tasks": [
-    { "id": "T1", "title": "Bảng orders + order_items", "tag": "BE", "status": "done" }
+    { "id": "T1", "title": "orders + order_items tables", "tag": "BE", "status": "done" }
   ],
-  "tests": {                     // cập nhật sau mỗi lượt chạy
+  "tests": {                     // updated after each run
     "unit":  { "pass": 42, "fail": 0 },
     "p4":    { "pass": 6, "fail": 1, "warn": 1, "total": 8 },
-    "p5":    [ { "id": "R-1", "name": "20 request mua sản phẩm còn 1", "result": "pass", "metric": "1/20 thành công" } ]
+    "p5":    [ { "id": "R-1", "name": "20 requests buying a product with 1 left in stock", "result": "pass", "metric": "1/20 succeeded" } ]
   },
   "bugs": [
-    { "id": "BUG-001", "title": "Double-submit tạo 2 đơn", "status": "open", "loop": 1 }
+    { "id": "BUG-001", "title": "Double-submit creates 2 orders", "status": "open", "loop": 1 }
   ],
-  "loops": 1,                    // số lần quay về P3 từ P4/P5
+  "loops": 1,                    // number of returns to P3 from P4/P5
   "blockedReason": null,
-  "report": null,                // P6: tóm tắt 3–5 dòng
-  "log": [                       // nhật ký, giữ tối đa 50 mục mới nhất
-    { "at": "2026-10-12T11:20:00+07:00", "phase": "P4", "kind": "bug", "text": "BUG-001 mở: double-submit" }
+  "report": null,                // P6: 3–5 line summary
+  "log": [                       // activity log, keep at most the 50 newest entries
+    { "at": "2026-10-12T11:20:00+07:00", "phase": "P4", "kind": "bug", "text": "BUG-001 opened: double-submit" }
   ],
   "updatedAt": "2026-10-12T11:20:00+07:00"
 }
@@ -85,46 +85,46 @@ Hai collection:
 
 `log[].kind`: `phase` · `gate` · `task` · `test` · `bug` · `blocked` · `note`.
 
-Nhật ký nằm ngay trong document tính năng, không tách thành collection riêng: kho dữ liệu giới hạn 25.000 document cho mỗi artifact, nên không tạo một document cho mỗi sự kiện.
+The log lives inside the feature document, not in a separate collection: the data store is limited to 25,000 documents per artifact, so do not create one document per event.
 
-## Trạng thái (`status`)
+## Status (`status`)
 
-| status | Nghĩa | Dashboard hiển thị |
+| status | Meaning | Dashboard shows |
 |---|---|---|
-| `todo` | đã tạo, chưa làm | xám |
-| `in_progress` | agent đang làm | xanh dương |
-| `waiting_review` | chờ người duyệt ở cổng ◆ | vàng — **cần bạn** |
-| `blocked` | BUG hết 3 vòng, thiếu môi trường hoặc `needs_redesign` | đỏ — **cần bạn** |
-| `done` | đã qua P6 | xanh lá |
+| `todo` | created, not started | gray |
+| `in_progress` | agent is working | blue |
+| `waiting_review` | waiting for the reviewer at a review gate ◆ | yellow — **needs you** |
+| `blocked` | BUG used up 3 loops, missing environment, or `needs_redesign` | red — **needs you** |
+| `done` | passed P6 | green |
 
-Trạng thái task: `todo` · `in_progress` · `done`. Bug: `open` · `fixed` · `blocked` · `needs_redesign` · `accepted` (warn được chấp nhận). Kết quả P5: `pass` · `fail` · `warn`.
+Task status: `todo` · `in_progress` · `done`. Bug: `open` · `fixed` · `blocked` · `needs_redesign` · `accepted` (warn accepted). P5 result: `pass` · `fail` · `warn`.
 
-## Khi nào cập nhật
+## When to update
 
-| Sự kiện | Ghi |
+| Event | Write |
 |---|---|
-| Bắt đầu bước mới | `phase`, `status`, `summary` + log `phase` |
-| Đến cổng ◆ | `status=waiting_review` + log `gate` |
-| Người duyệt đồng ý | `gates.<x>` + log `gate` |
-| Task xong | `tasks`, `summary` |
-| Chạy test xong | `tests.*` + log `test` |
-| Mở/đóng bug | `bugs`, `loops` + log `bug` |
-| Dừng | `status=blocked`, `blockedReason` + log `blocked` |
-| P6 xong | `status=done`, `report`, `gates.report` |
+| New step starts | `phase`, `status`, `summary` + log `phase` |
+| Review gate ◆ reached | `status=waiting_review` + log `gate` |
+| Reviewer approves | `gates.<x>` + log `gate` |
+| Task done | `tasks`, `summary` |
+| Test run done | `tests.*` + log `test` |
+| Bug opened/closed | `bugs`, `loops` + log `bug` |
+| Stop | `status=blocked`, `blockedReason` + log `blocked` |
+| P6 done | `status=done`, `report`, `gates.report` |
 
-Tối thiểu: mỗi lần chuyển bước và mỗi lần dừng. Không cập nhật cho từng lệnh nhỏ.
+Minimum: on every step change and every stop. Do not update for each small command.
 
-## Cách Claude ghi
+## How Claude writes
 
-Dùng tool `ArtifactData` với `url` = `dashboard_url`.
+Use the `ArtifactData` tool with `url` = `dashboard_url`.
 
-Nguồn dữ liệu là file `docs/superpowers/runs/<slug>/status.json` trong repo (cùng cấu trúc với document trên). Luôn cập nhật file này trước, rồi đồng bộ nguyên file lên dashboard:
+The data source is the file `docs/superpowers/runs/<slug>/status.json` in the repo (same structure as the document above). Always update this file first, then sync the whole file to the dashboard:
 
-1. **Tính năng mới:** `set` với `collection: "features"`, `doc_id: "<project>--<slug>"`, `file_path` = đường dẫn `status.json` (chưa tồn tại nên không cần `if_version`).
-2. **Cập nhật:** `get` document đó để lấy `version`, rồi `set` với `file_path` = `status.json` và `if_version` = version vừa đọc.
-   - Với `log`: thêm mục mới vào `status.json` rồi cắt còn 50 mục trước khi đồng bộ.
-3. Bị từ chối vì version đã đổi: `get` lại rồi ghi lại. Không ghi đè mù.
-4. Bị từ chối vì quyền (với Editor ngoài tổ chức claude.ai thì lỗi này luôn xảy ra): báo người dùng một lần trong phiên, rồi tiếp tục công việc. `status.json` vẫn đầy đủ.
-5. `projects/<project>`: tạo ở P0 (`dev-workflow:init`), cập nhật khi hồ sơ hoặc stack đổi.
+1. **New feature:** `set` with `collection: "features"`, `doc_id: "<project>--<slug>"`, `file_path` = the `status.json` path (it does not exist yet, so no `if_version` is needed).
+2. **Update:** `get` that document to read its `version`, then `set` with `file_path` = `status.json` and `if_version` = the version just read.
+   - For `log`: add the new entry to `status.json`, then trim it to 50 entries before syncing.
+3. Rejected because the version changed: `get` again, then write again. Never overwrite blindly.
+4. Rejected for permissions (this always happens for Editors outside the claude.ai organization): tell the user once per session, then continue the work. `status.json` stays complete.
+5. `projects/<project>`: created in P0 (`dev-workflow:init`), updated when the profile or stack changes.
 
-Chỉ đưa vào dashboard tóm tắt và số liệu. Nội dung chi tiết (spec, bug, bằng chứng) nằm trong repo, dashboard chỉ ghi đường dẫn. **Không ghi secret, token, connection string hay dữ liệu khách hàng thật.**
+Put only summaries and numbers on the dashboard. Details (spec, bugs, evidence) live in the repo; the dashboard only stores paths. **Never write secrets, tokens, connection strings, or real customer data.**

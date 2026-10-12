@@ -1,6 +1,6 @@
 {
   "name": "dev-workflow",
-  "description": "Spec-to-ship development workflow for Claude Code: spec, plan, TDD, Chrome DevTools UI tests, race/load tests, report.",
+  "description": "Spec-to-ship development workflow for Claude Code: spec, plan, TDD, Chrome DevTools UI tests saved as Playwright tests, race/load tests, report and pull request.",
   "owner": {
     "name": "Nguyễn Quang Hòa",
     "url": "https://github.com/quanghoath"
@@ -9,7 +9,7 @@
     {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
-      "description": "Skills dev-workflow:init (set up a repo), dev-workflow:run (take a feature through P1–P6, or quick mode for small fixes) and dev-workflow:status (where every feature stands).",
+      "description": "Skills dev-workflow:init (set up a repo), dev-workflow:run (take a feature through P1–P6, or quick mode for small fixes) and dev-workflow:status (where every feature stands), plus a session-start reminder.",
       "category": "development",
       "tags": [
         "workflow",

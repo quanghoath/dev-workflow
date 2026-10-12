@@ -1,0 +1,10 @@
+{
+  "name": "dev-workflow-demo-shop",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Tiny shop with two deliberate bugs, used to record a dev-workflow demo.",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  }
+}

@@ -2,9 +2,8 @@
   "extraKnownMarketplaces": {
     "dev-workflow": {
       "source": {
-        "source": "git",
-        "url": "https://gitlab.com/beesky/dev-workflow.git",
-        "ref": "main"
+        "source": "github",
+        "repo": "quanghoath/dev-workflow"
       },
       "autoUpdate": true
     }

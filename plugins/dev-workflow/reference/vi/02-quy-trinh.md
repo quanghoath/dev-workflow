@@ -74,7 +74,8 @@ Mỗi tính năng có một file `docs/superpowers/runs/<slug>/status.json`, cù
 - **Làm:** chạy các kịch bản P4 trong TEST-PLAN theo [04-quy-trinh-test.md](04-quy-trinh-test.md) (FE: Chrome DevTools MCP; BE: API e2e).
 - **Kết quả mỗi kịch bản:** `pass` / `fail` / `warn` (đạt chức năng nhưng chưa tối ưu: chậm, lỗi console, layout vỡ ở mobile…). Lưu bằng chứng vào `evidence/`.
 - **`fail` hoặc `warn`** → vào vòng phản hồi (bên dưới).
-- **Qua bước khi:** mọi kịch bản P4 `pass`; `warn` chỉ được giữ lại nếu người duyệt chấp nhận và ghi vào REPORT.
+- **Ghi lại thành test e2e:** nếu `e2e_framework: playwright`, mỗi kịch bản UI `smoke` hoặc gắn với BUG được viết thành test Playwright trong `e2e_dir` (Bước 3b trong [04-quy-trinh-test.md](04-quy-trinh-test.md)).
+- **Qua bước khi:** mọi kịch bản P4 `pass` (kể cả test e2e đã ghi); `warn` chỉ được giữ lại nếu người duyệt chấp nhận và ghi vào REPORT.
 
 ## P5 · Hardening
 
@@ -86,7 +87,12 @@ Mỗi tính năng có một file `docs/superpowers/runs/<slug>/status.json`, cù
 ## P6 · Tổng kết ◆
 
 - **Skill:** `superpowers:verification-before-completion` → `superpowers:requesting-code-review` → `superpowers:finishing-a-development-branch`.
-- **Làm:** chạy lại build + unit test + kịch bản P4 quan trọng nhất (smoke). Điền `REPORT.md` từ mẫu.
+- **Làm:** chạy lại build + unit test + e2e + kịch bản P4 smoke. Điền `REPORT.md` từ mẫu.
+- **Tạo PR/MR** (khi người duyệt chọn mở PR ở `finishing-a-development-branch`):
+  1. Push nhánh. Tạo nội dung PR từ `${CLAUDE_PLUGIN_ROOT}/templates/PR-BODY.md`, lấy số liệu từ `REPORT.md` và `status.json`.
+  2. `pr_tool: gh` → `gh pr create --base <pr_base> --title "<tiêu đề>" --body-file <file>`; `pr_tool: glab` → `glab mr create --target-branch <pr_base> --title "<tiêu đề>" --description "$(cat <file>)"`.
+  3. Không có CLI hoặc `pr_tool: none`: đưa người dùng nội dung PR (đã lưu ở `runs/<slug>/PR-BODY.md`) và link tạo PR thủ công.
+  4. Ghi link PR vào `status.json` (`prUrl`) và vào REPORT.
 - **Qua bước khi:** người duyệt đọc REPORT và chọn cách merge/PR.
 - **Dashboard:** `status=done`, đính kèm tóm tắt REPORT (số AC đạt, số bug, số vòng, chỉ số P5).
 

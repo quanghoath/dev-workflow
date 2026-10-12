@@ -1,0 +1,29 @@
+{
+  "project": "shop-api",
+  "slug": "button-label",
+  "title": "Fix the label on the Place order button",
+  "mode": "quick",
+  "phase": "P6",
+  "status": "done",
+  "summary": "Done: 2/2 AC, no bugs",
+  "specPath": null,
+  "planPath": null,
+  "branch": "fix/button-label",
+  "gates": { "spec": "2026-10-12T16:00:00+07:00", "plan": null, "report": null },
+  "tasks": [
+    { "id": "Q1", "title": "Button shows item count + disabled when cart is empty", "tag": "FE", "status": "done" }
+  ],
+  "tests": {
+    "unit": { "pass": 39, "fail": 0 },
+    "p4": { "pass": 2, "fail": 0, "warn": 0, "total": 2 }
+  },
+  "bugs": [],
+  "loops": 0,
+  "blockedReason": null,
+  "report": "2/2 AC met, 2 files changed, no bugs.",
+  "log": [
+    { "at": "2026-10-12T16:25:00+07:00", "phase": "P6", "kind": "phase", "text": "Quick report done" },
+    { "at": "2026-10-12T16:00:00+07:00", "phase": "P1", "kind": "gate", "text": "User approved quick mode" }
+  ],
+  "updatedAt": "2026-10-12T16:25:00+07:00"
+}
