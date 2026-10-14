@@ -1,7 +1,7 @@
 {
   "name": "dev-workflow",
   "displayName": "Dev Workflow (P0–P6)",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "Spec-to-ship workflow for FE, BE or full-stack projects on top of superpowers: spec → plan + test plan → TDD → UI testing with Chrome DevTools MCP saved as Playwright tests → race-condition & load testing → report, pull request and an acceptance test guide for BA/QA, with review gates, a 3-round bug feedback loop, a quick mode for small fixes, status tracking and an optional live dashboard.",
   "author": {
     "name": "Nguyễn Quang Hòa",

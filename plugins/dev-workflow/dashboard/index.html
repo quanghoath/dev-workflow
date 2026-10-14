@@ -103,6 +103,11 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
 .seg.cur.s-waiting_review i { background: var(--warn); }
 .seg.cur.s-blocked i { background: var(--bad); }
 .seg.cur span { color: var(--fg); font-weight: 600; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 16px 14px; }
+.action { font: 600 13px var(--font-body); text-decoration: none; border: 1px solid var(--line); border-radius: 8px; padding: 5px 12px; color: var(--accent); background: var(--surface); display: inline-flex; gap: 6px; align-items: center; }
+.action.primary { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.action:hover { border-color: var(--accent); }
+.action:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .kv { display: inline-flex; gap: 6px; align-items: baseline; font-size: 13px; }
 .kv .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .v.bad { color: var(--bad); } .v.warn { color: var(--warn); } .v.ok { color: var(--ok); }
@@ -178,7 +183,7 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
       tasks: "Tasks", openBugs: "Open bugs", rounds: "Rounds", none: "None yet.",
       blockedPrefix: "Blocked: ", report: "Report", bugs: "Bugs", round: (n) => `round ${n}/3`,
       approvals: "Approvals", notYet: "not yet", gates: ["Spec (P1)", "Plan (P2)", "Report (P6)"],
-      inRepo: "In the repo", log: "Log", pr: "Pull request", guide: "Test guide (BA/QA)",
+      inRepo: "In the repo", log: "Log", pr: "Pull request", guide: "Test guide (BA/QA)", openGuide: "Open test guide", openPr: "Open pull request", tester: "BA/QA",
       quick: "quick", quickTitle: "Quick mode: spec and plan in chat, no P5",
       emptyTitle: "No features yet",
       emptyText: "When Claude starts P1 for a feature in any project using dev-workflow, it shows up here with its current step, tasks, test results and bugs.",
@@ -204,7 +209,7 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
       tasks: "Task", openBugs: "Bug mở", rounds: "Vòng", none: "Chưa có.",
       blockedPrefix: "Bị chặn: ", report: "Tổng kết", bugs: "Bug", round: (n) => `vòng ${n}/3`,
       approvals: "Duyệt", notYet: "chưa", gates: ["Spec (P1)", "Plan (P2)", "Tổng kết (P6)"],
-      inRepo: "Trong repo", log: "Nhật ký", pr: "Pull request", guide: "Hướng dẫn test (BA/QA)",
+      inRepo: "Trong repo", log: "Nhật ký", pr: "Pull request", guide: "Hướng dẫn test (BA/QA)", openGuide: "Mở hướng dẫn test", openPr: "Mở pull request", tester: "BA/QA",
       quick: "nhanh", quickTitle: "Chế độ nhanh: spec/plan trong chat, bỏ P5",
       emptyTitle: "Chưa có tính năng nào",
       emptyText: "Khi Claude bắt đầu P1 cho một tính năng ở bất kỳ dự án nào theo dev-workflow, tính năng đó sẽ hiện ở đây với bước hiện tại, task, kết quả test và bug.",
@@ -317,6 +322,8 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
     if (p5.length) out.push(`<span class="kv"><span class="label">P5</span><span class="v ${p5.some((r) => r.result === "fail") ? "bad" : "ok"}">${p5.filter((r) => r.result === "pass").length}/${p5.length}</span></span>`);
     const openBugs = arr(f.bugs).filter((b) => b.status !== "fixed" && b.status !== "accepted").length;
     if (arr(f.bugs).length) out.push(`<span class="kv"><span class="label">${T.openBugs}</span><span class="v ${openBugs ? "bad" : "ok"}">${openBugs}</span></span>`);
+    const acc = t.acceptance;
+    if (acc && num(acc.total)) out.push(`<span class="kv"><span class="label">${T.tester}</span><span class="v ${num(acc.fail) ? "bad" : num(acc.pass) === num(acc.total) ? "ok" : ""}">${num(acc.pass)}/${num(acc.total)}${num(acc.fail) ? " · " + num(acc.fail) + "✗" : ""}</span></span>`);
     if (num(f.loops)) out.push(`<span class="kv"><span class="label">${T.rounds}</span><span class="v">${num(f.loops)}</span></span>`);
     return out.join("");
   }
@@ -349,6 +356,13 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
     return `<div class="detail">${parts.join("")}</div>`;
   }
 
+  function actions(f) {
+    const guide = safeUrl(f.guideUrl);
+    const pr = safeUrl(f.prUrl);
+    if (!guide && !pr) return "";
+    return `<div class="actions">${guide ? `<a class="action primary" href="${esc(guide)}" target="_blank" rel="noopener">✓ ${T.openGuide}</a>` : ""}${pr ? `<a class="action" href="${esc(pr)}" target="_blank" rel="noopener">${T.openPr}</a>` : ""}</div>`;
+  }
+
   function renderList() {
     const el = $("list");
     if (!state.loaded.f) return;
@@ -373,6 +387,7 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
           <div class="right"><span class="pill p-${esc(f.status)}">${esc(T.status[f.status] || f.status || "—")}</span><span class="when" title="${esc(f.updatedAt)}">${esc(ago(f.updatedAt))}</span></div>
           <div class="meta">${track(f)}${testsSummary(f)}</div>
         </button>
+        ${actions(f)}
         ${open ? detail(f) : ""}
       </article>`;
     }).join("");

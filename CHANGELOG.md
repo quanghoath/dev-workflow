@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.2 — 2026-10-14
+- Dashboard: every feature row shows **Open test guide** and **Open pull request** buttons, plus BA/QA results (`tests.acceptance`), without expanding the row.
+
 ## 2.1.1 — 2026-10-14
 - Test guide page and dashboard open in **Vietnamese by default** with a VI / EN switch (remembered per viewer). A guide can hold both languages: `{"vi": …, "en": …}`.
 - Vietnamese example guide: `examples/vi/…/dat-hang/test-guide.json`.
