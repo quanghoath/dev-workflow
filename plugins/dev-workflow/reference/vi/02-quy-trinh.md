@@ -13,7 +13,7 @@ Trước P1, chọn một trong hai chế độ và ghi vào `status.json` (`mod
 | Spec / plan | file spec + plan + TEST-PLAN | **trong chat**: mục tiêu, 1–3 AC, file sẽ sửa, cách kiểm tra (một lần duyệt) |
 | Build | P3 đầy đủ | TDD: test tái hiện/đặc tả → sửa → build + unit test xanh |
 | Kiểm tra | P4 + P5 | chỉ P4 cho các AC liên quan (FE: Chrome DevTools MCP; BE: gọi API) |
-| Tổng kết | REPORT.md đầy đủ ◆ | mục "Báo cáo nhanh" trong `REPORT.md` |
+| Tổng kết | REPORT.md đầy đủ + hướng dẫn kiểm thử nghiệm thu ◆ | mục "Báo cáo nhanh" trong `REPORT.md` + hướng dẫn kiểm thử ngắn |
 
 **Một chiều:** đang ở chế độ nhanh mà phát hiện độ phức tạp ẩn (phải sửa nhiều file hơn, đụng schema/API, thấy rủi ro race…) thì **dừng, báo người dùng và chuyển sang đầy đủ** từ P1. Không chuyển ngược từ đầy đủ sang nhanh.
 
@@ -93,6 +93,7 @@ Mỗi tính năng có một file `docs/superpowers/runs/<slug>/status.json`, cù
   2. `pr_tool: gh` → `gh pr create --base <pr_base> --title "<tiêu đề>" --body-file <file>`; `pr_tool: glab` → `glab mr create --target-branch <pr_base> --title "<tiêu đề>" --description "$(cat <file>)"`.
   3. Không có CLI hoặc `pr_tool: none`: đưa người dùng nội dung PR (đã lưu ở `runs/<slug>/PR-BODY.md`) và link tạo PR thủ công.
   4. Ghi link PR vào `status.json` (`prUrl`) và vào REPORT.
+- **Hướng dẫn kiểm thử nghiệm thu** cho BA/QA (trừ khi `test_guide: none`): ghi `runs/<slug>/test-guide.json`, publish trang hướng dẫn hoặc ghi `TEST-GUIDE.md`, lưu `guideUrl`, và thêm mục **Kết quả** vào cuối spec (link tới REPORT, hướng dẫn test, PR). Xem [05-huong-dan-nghiem-thu.md](05-huong-dan-nghiem-thu.md).
 - **Qua bước khi:** người duyệt đọc REPORT và chọn cách merge/PR.
 - **Dashboard:** `status=done`, đính kèm tóm tắt REPORT (số AC đạt, số bug, số vòng, chỉ số P5).
 

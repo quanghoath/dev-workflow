@@ -1,0 +1,61 @@
+{
+  "lang": "en",
+  "project": "shop-api",
+  "slug": "place-order",
+  "title": "Place order and decrement stock",
+  "round": 1,
+  "roundNote": "",
+  "whatWasDone": [
+    "Signed-in customers can place an order from their cart.",
+    "Stock goes down by the ordered quantity as soon as the order is placed.",
+    "If an item is out of stock, the order is refused and the customer sees which item.",
+    "Clicking \"Place order\" twice quickly creates only one order.",
+    "A customer cannot open another customer's order."
+  ],
+  "environment": {
+    "url": "https://staging.shop.example.com/cart",
+    "accounts": ["customer-a@test.example (password in the team vault)", "customer-b@test.example"],
+    "data": "Product \"Limited grinder\" has 1 item in stock. Ask a developer to reset test data if it shows 0.",
+    "notes": ["Use Chrome or Edge, desktop.", "Each run creates real test orders on staging; that is fine."]
+  },
+  "sections": [
+    {
+      "ac": "AC-1",
+      "title": "Place an order",
+      "steps": [
+        { "id": "1.1", "action": "Sign in as customer A and add \"Espresso beans\" and \"Ceramic mug\" to the cart, then open the cart.", "expected": "Both items are listed with their prices and a total." },
+        { "id": "1.2", "action": "Click \"Place order\".", "expected": "The page shows \"Order placed\" with an order number." },
+        { "id": "1.3", "action": "Open the product page of \"Ceramic mug\" again.", "expected": "Stock shown is 1 lower than before." }
+      ]
+    },
+    {
+      "ac": "AC-2",
+      "title": "Empty cart",
+      "steps": [
+        { "id": "2.1", "action": "Remove every item from the cart.", "expected": "\"Place order\" is disabled and the page says \"Cart is empty\"." }
+      ]
+    },
+    {
+      "ac": "AC-3",
+      "title": "Out of stock",
+      "steps": [
+        { "id": "3.1", "action": "Add 2 × \"Limited grinder\" to the cart and click \"Place order\".", "expected": "The order is refused with \"Limited grinder is out of stock\". No order number appears." }
+      ]
+    }
+  ],
+  "edgeCases": [
+    { "id": "E1", "action": "Click \"Place order\" twice very quickly.", "expected": "Only one order number appears, and \"My orders\" shows one new order." },
+    { "id": "E2", "action": "While signed in as customer B, paste the address of customer A's order (from step 1.2).", "expected": "\"Order not found\". Customer A's order details are never shown." }
+  ],
+  "howToReport": [
+    "Click \"Fail\" on the step and write what you saw in the note box.",
+    "Add the account you used and the time; a screenshot link helps.",
+    "Tell the developer. Claude reads the failed steps and notes from this page and opens a bug for each."
+  ],
+  "links": {
+    "report": "docs/superpowers/runs/place-order/REPORT.md",
+    "spec": "docs/superpowers/specs/2026-10-12-place-order-design.md",
+    "pr": ""
+  },
+  "generatedAt": "2026-10-12T15:40:00+07:00"
+}

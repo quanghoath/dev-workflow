@@ -13,13 +13,14 @@ Read when you reach the step:
 - `${CLAUDE_PLUGIN_ROOT}/reference/04-testing-guide.md`: P3–P6.
 - `${CLAUDE_PLUGIN_ROOT}/reference/03-dashboard.md`: every status update.
 - `${CLAUDE_PLUGIN_ROOT}/reference/01-project-profiles.md`: test tools and default thresholds.
-- Templates: `${CLAUDE_PLUGIN_ROOT}/templates/` (`status.json`, `spec-addendum.md`, `TEST-PLAN.md`, `BUG.md`, `REPORT.md` with a "Quick report" section, `PR-BODY.md`). When the user writes in Vietnamese, use `${CLAUDE_PLUGIN_ROOT}/templates/vi/` instead.
+- `${CLAUDE_PLUGIN_ROOT}/reference/05-acceptance-guide.md`: the acceptance test guide for BA/QA at the end, and reading their results.
+- Templates: `${CLAUDE_PLUGIN_ROOT}/templates/` (`status.json`, `spec-addendum.md`, `TEST-PLAN.md`, `BUG.md`, `REPORT.md` with a "Quick report" section, `PR-BODY.md`, `test-guide.json`, `TEST-GUIDE.md`). When the user writes in Vietnamese, use `${CLAUDE_PLUGIN_ROOT}/templates/vi/` instead.
 
 ## Choose a mode before P1
 
 - **Quick (`quick`)** only when all 4 conditions in `02-workflow.md` hold (about 3 code files or fewer, no schema or API contract change, no race/load/security risk, the user agrees). Offer quick mode with one question when the task looks small; if the user asks for "quick", still check the 4 conditions.
 - Otherwise **full (`full`)**.
-- Quick mode: short spec + plan in chat (goal, 1–3 ACs, files to change, how to verify) → one approval → TDD → P4 for the affected ACs → "Quick report" section of `REPORT.md`. If hidden complexity appears, stop, tell the user, and switch to full mode.
+- Quick mode: short spec + plan in chat (goal, 1–3 ACs, files to change, how to verify) → one approval → TDD → P4 for the affected ACs → "Quick report" section of `REPORT.md` → acceptance test guide. If hidden complexity appears, stop, tell the user, and switch to full mode.
 
 ## Full flow
 
@@ -30,7 +31,7 @@ Read when you reach the step:
 | P3 Build | `subagent-driven-development` or `executing-plans`, with `test-driven-development` | code + green unit tests | — |
 | P4 Integration | (Chrome DevTools MCP / API e2e; passing UI scenarios recorded as Playwright tests) | scenario results + `evidence/` + `e2e/<slug>.spec.ts` | failure → feedback loop |
 | P5 Hardening | — | race, load, performance numbers | failure → feedback loop |
-| P6 Report | `verification-before-completion`, `requesting-code-review`, `finishing-a-development-branch` | `REPORT.md` + PR/MR from `PR-BODY.md` | ◆ reviewer |
+| P6 Report | `verification-before-completion`, `requesting-code-review`, `finishing-a-development-branch` | `REPORT.md` + PR/MR from `PR-BODY.md` + acceptance test guide link | ◆ reviewer |
 
 Feedback loop: `BUG-NNN.md` → `systematic-debugging` → reproducing test → fix → rerun. **At most 3 rounds per bug**, then `blocked` and stop.
 
@@ -45,3 +46,5 @@ Feedback loop: `BUG-NNN.md` → `systematic-debugging` → reproducing test → 
 6. **Update status** on every step change, gate, bug opened or closed, and stop: edit `runs/<slug>/status.json` first (valid JSON, no comments), then sync to the dashboard (`url` = `dashboard_url` in the config) as described in `03-dashboard.md`. With `dashboard_url: none`, skip all dashboard steps. If it is missing or empty, ask the user once (paste a link / create one / none) and save the answer in the config. If a dashboard write fails, say so once and keep working; never stop work because of the dashboard.
 7. FULLSTACK order: `[CONTRACT]` → `[BE]` → API e2e passes → `[FE]`.
 8. Talk to the user and write specs, plans and reports in the user's language.
+9. **Finish with links.** Unless `test_guide: none`, every feature ends with an acceptance test guide for non-developers (`05-acceptance-guide.md`) and a **Results** section at the end of the spec linking REPORT, the guide and the PR. The final message to the user gives the guide link and says who to share it with.
+10. When the user says the BA/QA has finished testing, read the results from the guide page (`05-acceptance-guide.md`, "Reading the results"): each failed step becomes a bug in the feedback loop; all passed → record acceptance.

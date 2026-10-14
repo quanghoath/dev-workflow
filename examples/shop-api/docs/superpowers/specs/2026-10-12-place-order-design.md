@@ -39,3 +39,10 @@ A signed-in customer places an order from their cart. The system creates a `PEND
 |---|---|---|---|
 | `POST /api/orders` | `{ items: [{ productId, qty }] }` | `201 { id, status: "PENDING", total }` | `400` empty cart · `409 { productId }` out of stock |
 | `GET /api/orders/{id}` | — | `200 { id, status, items, total }` | `404` does not exist or is not the caller's order |
+
+## Results
+
+- Status: done · 2026-10-12
+- What was done and evidence: [REPORT.md](../runs/place-order/REPORT.md)
+- Acceptance test guide (for BA/QA): a claude.ai page built from [test-guide.json](../runs/place-order/test-guide.json)
+- Pull request: (link added by P6)

@@ -1,0 +1,294 @@
+<title>Acceptance Test Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; header + progress, "what was done", setup, then numbered steps with Pass/Fail controls. Content comes from guide.json published next to this page. */
+:root {
+  --bg: #f6f7f9; --surface: #ffffff; --sunk: #eceef2; --line: #dde1e8;
+  --fg: #171a21; --muted: #5d6573; --accent: #2f5bd3; --accent-soft: #e4ebfb;
+  --ok: #1d7a4a; --ok-soft: #dff2e7; --bad: #b42332; --bad-soft: #fbe2e4; --warn: #9a6200; --warn-soft: #fbeed3;
+  --font-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Instrument Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111318; --surface: #191c23; --sunk: #21252e; --line: #2c313c; --fg: #e8eaef; --muted: #9aa2b1;
+    --accent: #7d9cf0; --accent-soft: #1f2a48; --ok: #5cc98c; --ok-soft: #173126; --bad: #f07a85; --bad-soft: #3a1a1f;
+    --warn: #e7b34f; --warn-soft: #362a12; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #111318; --surface: #191c23; --sunk: #21252e; --line: #2c313c; --fg: #e8eaef; --muted: #9aa2b1;
+  --accent: #7d9cf0; --accent-soft: #1f2a48; --ok: #5cc98c; --ok-soft: #173126; --bad: #f07a85; --bad-soft: #3a1a1f;
+  --warn: #e7b34f; --warn-soft: #362a12; color-scheme: dark;
+}
+body { background: var(--bg); color: var(--fg); font: 15.5px/1.6 var(--font-body); }
+.wrap { max-width: 820px; margin: 0 auto; padding: 28px 16px 72px; display: grid; gap: 22px; }
+h1 { font: 700 clamp(26px, 4.4vw, 34px)/1.15 var(--font-display); margin: 4px 0 0; text-wrap: balance; }
+h2 { font: 600 20px/1.3 var(--font-display); margin: 0; text-wrap: balance; }
+.eyebrow { font: 500 12.5px var(--font-mono); color: var(--muted); }
+.label { font-size: 11.5px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+.muted { color: var(--muted); }
+.mono { font-family: var(--font-mono); font-size: 13px; }
+a { color: var(--accent); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; display: grid; gap: 10px; }
+ul.plain { margin: 0; padding-left: 20px; display: grid; gap: 4px; }
+
+.progress { display: grid; gap: 8px; }
+.bar { height: 10px; border-radius: 5px; background: var(--sunk); display: flex; overflow: hidden; }
+.bar i { display: block; height: 100%; }
+.bar .p { background: var(--ok); } .bar .f { background: var(--bad); }
+.counts { display: flex; flex-wrap: wrap; gap: 6px 18px; font-variant-numeric: tabular-nums; }
+.counts b { font-weight: 600; }
+.round { font: 500 12.5px var(--font-mono); background: var(--accent-soft); color: var(--accent); border-radius: 999px; padding: 2px 10px; justify-self: start; }
+
+dl.setup { margin: 0; display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px 16px; }
+dl.setup dt { color: var(--muted); }
+dl.setup dd { margin: 0; overflow-wrap: anywhere; }
+
+.section { display: grid; gap: 12px; }
+.section-head { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.ac { font: 600 12.5px var(--font-mono); color: var(--accent); }
+
+.step { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 10px; grid-template-columns: auto minmax(0, 1fr); }
+.step.r-pass { border-left: 4px solid var(--ok); }
+.step.r-fail { border-left: 4px solid var(--bad); }
+.num { font: 600 13px var(--font-mono); color: var(--muted); min-width: 3.2em; padding-top: 2px; }
+.body { display: grid; gap: 8px; min-width: 0; }
+.do, .expect { margin: 0; }
+.expect { background: var(--sunk); border-radius: 8px; padding: 8px 12px; }
+.expect .label { display: block; margin-bottom: 2px; }
+.shot { max-width: 100%; border: 1px solid var(--line); border-radius: 8px; cursor: zoom-in; }
+.shot.big { cursor: zoom-out; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.btn { font: 600 14px var(--font-body); border: 1px solid var(--line); background: var(--surface); color: var(--fg); padding: 6px 14px; border-radius: 8px; cursor: pointer; }
+.btn:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.btn.pass[aria-pressed="true"] { background: var(--ok); border-color: var(--ok); color: var(--surface); }
+.btn.fail[aria-pressed="true"] { background: var(--bad); border-color: var(--bad); color: var(--surface); }
+.btn:disabled { opacity: .55; cursor: default; }
+.who { font-size: 12.5px; color: var(--muted); }
+textarea { font: 14px/1.5 var(--font-body); width: 100%; box-sizing: border-box; min-height: 2.6em; resize: vertical; border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; background: var(--surface); color: var(--fg); }
+.note-saved { font-size: 12px; color: var(--ok); }
+.banner { background: var(--warn-soft); color: var(--warn); border-radius: 8px; padding: 10px 14px; font-weight: 500; }
+.links { display: flex; flex-wrap: wrap; gap: 8px 20px; }
+@media (max-width: 520px) { .step { grid-template-columns: minmax(0, 1fr); } .num { padding-top: 0; } dl.setup { grid-template-columns: minmax(0, 1fr); } dl.setup dd { margin-bottom: 6px; } }
+@media (prefers-reduced-motion: no-preference) { .btn { transition: background-color .15s; } }
+</style>
+
+<div class="wrap" id="app">
+  <div class="card"><h2 id="loading">Loading…</h2><p class="muted" id="loadingText"></p></div>
+</div>
+
+<script>
+(function () {
+  const L = {
+    en: {
+      loading: "Loading the test guide…", loadFail: "Could not load guide.json published with this page.",
+      done: "What was done", setup: "Before you start", env: "Test site", accounts: "Test accounts", data: "Test data",
+      steps: "Test steps", edge: "Also try", report: "Found a problem?", links: "For developers",
+      reportDoc: "Technical report", pr: "Pull request", spec: "Spec",
+      doLabel: "Do", expect: "You should see", pass: "Pass", fail: "Fail",
+      notePh: "Note (what you saw, browser, account…)", saved: "Saved",
+      passed: "passed", failed: "failed", notTested: "not tested", of: "of",
+      round: (n) => `Test round ${n}`, by: (name, when) => `${name} · ${when}`, someone: "Someone",
+      readOnly: "You can view this guide but cannot record results. Ask the owner for Contributor access.",
+      noDb: "Results cannot be saved in this view. Open the page on claude.ai while signed in.",
+      allPass: "All steps passed. Tell the developer the feature is accepted.",
+      someFail: "Some steps failed. Tell the developer; Claude reads the failed steps and notes from this page.",
+      locale: "en-US"
+    },
+    vi: {
+      loading: "Đang tải hướng dẫn test…", loadFail: "Không tải được guide.json đi kèm trang này.",
+      done: "Đã làm gì", setup: "Chuẩn bị", env: "Trang test", accounts: "Tài khoản test", data: "Dữ liệu test",
+      steps: "Các bước kiểm tra", edge: "Thử thêm các trường hợp", report: "Gặp lỗi thì làm gì", links: "Cho lập trình viên",
+      reportDoc: "Báo cáo kỹ thuật", pr: "Pull request", spec: "Spec",
+      doLabel: "Làm", expect: "Phải thấy", pass: "Đạt", fail: "Không đạt",
+      notePh: "Ghi chú (thấy gì, trình duyệt, tài khoản…)", saved: "Đã lưu",
+      passed: "đạt", failed: "không đạt", notTested: "chưa test", of: "trên",
+      round: (n) => `Lần test thứ ${n}`, by: (name, when) => `${name} · ${when}`, someone: "Ai đó",
+      readOnly: "Bạn xem được hướng dẫn nhưng không ghi được kết quả. Nhờ chủ trang cấp quyền Contributor.",
+      noDb: "Không lưu được kết quả ở chế độ xem này. Mở trang trên claude.ai khi đã đăng nhập.",
+      allPass: "Tất cả các bước đã đạt. Báo lập trình viên là tính năng được nghiệm thu.",
+      someFail: "Có bước không đạt. Báo lập trình viên; Claude đọc các bước không đạt và ghi chú ngay trên trang này.",
+      locale: "vi-VN"
+    }
+  };
+
+  const app = document.getElementById("app");
+  const esc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const arr = (v) => (Array.isArray(v) ? v : []);
+  const httpsUrl = (u) => (typeof u === "string" && /^https:\/\//.test(u) ? u : "");
+  const localImg = (u) => (typeof u === "string" && /^[A-Za-z0-9_\-./]+\.(png|jpe?g|webp|gif)$/i.test(u) && !u.includes("..") ? u : "");
+
+  let T = L[(navigator.language || "en").toLowerCase().startsWith("vi") ? "vi" : "en"];
+  document.getElementById("loading").textContent = T.loading;
+
+  const state = { guide: null, results: {}, db: null, user: null, canWrite: true, names: {}, savedNote: null };
+
+  function allSteps(g) {
+    return [...arr(g.sections).flatMap((s) => arr(s.steps)), ...arr(g.edgeCases)];
+  }
+  function resKey(stepId) { return `${state.guide.round || 1}-${stepId}`; }
+  function stamp(iso) {
+    const t = Date.parse(iso);
+    return t ? new Date(t).toLocaleString(T.locale, { hour: "2-digit", minute: "2-digit", day: "2-digit", month: "2-digit" }) : "";
+  }
+
+  function stepHtml(s, n) {
+    const r = state.results[resKey(s.id)] || {};
+    const img = localImg(s.image);
+    const who = r.by ? T.by(state.names[r.by] || T.someone, stamp(r.at)) : "";
+    const dis = state.canWrite && state.db ? "" : " disabled";
+    return `<article class="step${r.result ? " r-" + esc(r.result) : ""}" id="step-${esc(s.id)}">
+      <div class="num">${esc(s.id || n)}</div>
+      <div class="body">
+        <p class="do"><span class="label">${T.doLabel}</span> ${esc(s.action)}</p>
+        <p class="expect"><span class="label">${T.expect}</span>${esc(s.expected)}</p>
+        ${img ? `<img class="shot" src="${esc(img)}" alt="${esc(s.expected)}" loading="lazy" width="760">` : ""}
+        <div class="controls">
+          <button class="btn pass" type="button" data-step="${esc(s.id)}" data-r="pass" aria-pressed="${r.result === "pass"}"${dis}>✓ ${T.pass}</button>
+          <button class="btn fail" type="button" data-step="${esc(s.id)}" data-r="fail" aria-pressed="${r.result === "fail"}"${dis}>✗ ${T.fail}</button>
+          <span class="who">${esc(who)}</span>
+        </div>
+        <textarea id="note-${esc(s.id)}" data-step="${esc(s.id)}" placeholder="${esc(T.notePh)}"${dis}>${esc(r.note || "")}</textarea>
+        ${state.savedNote === s.id ? `<span class="note-saved">${T.saved}</span>` : ""}
+      </div>
+    </article>`;
+  }
+
+  function render() {
+    const g = state.guide;
+    const steps = allSteps(g);
+    const res = steps.map((s) => state.results[resKey(s.id)] || {});
+    const p = res.filter((r) => r.result === "pass").length;
+    const f = res.filter((r) => r.result === "fail").length;
+    const total = steps.length || 1;
+    const env = g.environment || {};
+    const envUrl = httpsUrl(env.url) || (typeof env.url === "string" && /^http:\/\/localhost/.test(env.url) ? env.url : "");
+    const links = g.links || {};
+    let n = 0;
+
+    const parts = [];
+    parts.push(`<header class="card">
+      <span class="eyebrow">${esc(g.project || "")}${g.slug ? " · " + esc(g.slug) : ""}</span>
+      <h1>${esc(g.title || "")}</h1>
+      ${g.round > 1 ? `<span class="round">${esc(T.round(g.round))}${g.roundNote ? " · " + esc(g.roundNote) : ""}</span>` : ""}
+      <div class="progress">
+        <div class="bar" role="img" aria-label="${p} ${T.passed}, ${f} ${T.failed}"><i class="p" style="width:${(p / total) * 100}%"></i><i class="f" style="width:${(f / total) * 100}%"></i></div>
+        <div class="counts"><span><b>${p}</b> ${T.passed}</span><span><b>${f}</b> ${T.failed}</span><span><b>${steps.length - p - f}</b> ${T.notTested}</span></div>
+      </div>
+      ${p === steps.length && steps.length ? `<p class="muted">${T.allPass}</p>` : f ? `<p class="muted">${T.someFail}</p>` : ""}
+    </header>`);
+    if (!state.db) parts.push(`<div class="banner">${T.noDb}</div>`);
+    else if (!state.canWrite) parts.push(`<div class="banner">${T.readOnly}</div>`);
+
+    if (arr(g.whatWasDone).length) parts.push(`<section class="card"><h2>${T.done}</h2><ul class="plain">${arr(g.whatWasDone).map((x) => `<li>${esc(x)}</li>`).join("")}</ul></section>`);
+
+    parts.push(`<section class="card"><h2>${T.setup}</h2><dl class="setup">
+      ${envUrl ? `<dt>${T.env}</dt><dd><a href="${esc(envUrl)}" target="_blank" rel="noopener">${esc(envUrl)}</a></dd>` : ""}
+      ${arr(env.accounts).length ? `<dt>${T.accounts}</dt><dd>${arr(env.accounts).map((a) => esc(a)).join("<br>")}</dd>` : ""}
+      ${env.data ? `<dt>${T.data}</dt><dd>${esc(env.data)}</dd>` : ""}
+    </dl>${arr(env.notes).length ? `<ul class="plain">${arr(env.notes).map((x) => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</section>`);
+
+    parts.push(`<h2>${T.steps}</h2>`);
+    for (const sec of arr(g.sections)) {
+      parts.push(`<section class="section"><div class="section-head">${sec.ac ? `<span class="ac">${esc(sec.ac)}</span>` : ""}<h2>${esc(sec.title || "")}</h2></div>
+        ${arr(sec.steps).map((s) => stepHtml(s, ++n)).join("")}</section>`);
+    }
+    if (arr(g.edgeCases).length) parts.push(`<section class="section"><h2>${T.edge}</h2>${arr(g.edgeCases).map((s) => stepHtml(s, ++n)).join("")}</section>`);
+
+    if (arr(g.howToReport).length) parts.push(`<section class="card"><h2>${T.report}</h2><ul class="plain">${arr(g.howToReport).map((x) => `<li>${esc(x)}</li>`).join("")}</ul></section>`);
+
+    const pr = httpsUrl(links.pr);
+    const linkItems = [
+      links.report ? `<span><span class="label">${T.reportDoc}</span> <span class="mono">${esc(links.report)}</span></span>` : "",
+      links.spec ? `<span><span class="label">${T.spec}</span> <span class="mono">${esc(links.spec)}</span></span>` : "",
+      pr ? `<span><span class="label">${T.pr}</span> <a href="${esc(pr)}" target="_blank" rel="noopener">${esc(pr)}</a></span>` : ""
+    ].filter(Boolean);
+    if (linkItems.length) parts.push(`<section class="card"><h2>${T.links}</h2><div class="links">${linkItems.join("")}</div></section>`);
+
+    const a = document.activeElement;
+    const keep = a && a.tagName === "TEXTAREA" && a.id ? { id: a.id, value: a.value, s: a.selectionStart, e: a.selectionEnd } : null;
+    app.innerHTML = parts.join("");
+    if (keep) {
+      const el = document.getElementById(keep.id);
+      if (el) { el.value = keep.value; el.focus(); el.setSelectionRange(keep.s, keep.e); }
+    }
+  }
+
+  async function resolveNames() {
+    if (!state.user) return;
+    const ids = [...new Set(Object.values(state.results).map((r) => r.by).filter(Boolean))];
+    if (!ids.length) return;
+    const ps = await state.user.profiles(ids);
+    for (const id of ids) state.names[id] = (ps[id] && ps[id].name) || "";
+  }
+
+  async function save(stepId, patch) {
+    if (!state.db || !state.canWrite) return;
+    const key = resKey(stepId);
+    const prev = state.results[key] || {};
+    const me = state.user ? await state.user.id() : null;
+    const doc = Object.assign({}, prev, patch, { step: stepId, round: state.guide.round || 1, at: new Date().toISOString() }, me ? { by: me } : {});
+    try {
+      await state.db.doc("results/" + key).set(doc);
+    } catch (e) {
+      if (e && e.code === "invalid_argument") { state.canWrite = false; render(); }
+    }
+  }
+
+  app.addEventListener("click", (e) => {
+    const b = e.target.closest("button[data-r]");
+    if (b && !b.disabled) {
+      const cur = (state.results[resKey(b.dataset.step)] || {}).result;
+      save(b.dataset.step, { result: cur === b.dataset.r ? null : b.dataset.r });
+      return;
+    }
+    const img = e.target.closest(".shot");
+    if (img) img.classList.toggle("big");
+  });
+  app.addEventListener("change", (e) => {
+    const t = e.target;
+    if (t.tagName === "TEXTAREA" && t.dataset.step) {
+      state.savedNote = t.dataset.step;
+      save(t.dataset.step, { note: t.value.slice(0, 2000) });
+    }
+  });
+
+  async function start() {
+    try {
+      const r = await fetch("guide.json", { cache: "no-store" });
+      if (!r.ok) throw new Error(String(r.status));
+      state.guide = await r.json();
+    } catch (e) {
+      app.innerHTML = `<div class="card"><h2>${T.loadFail}</h2></div>`;
+      return;
+    }
+    if (state.guide.lang && L[state.guide.lang]) T = L[state.guide.lang];
+    document.documentElement.lang = state.guide.lang || "en";
+    if (state.guide.title) document.title = state.guide.title;
+    render();
+
+    if (!window.claude || typeof window.claude.use !== "function") return;
+    const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+    state.db = db; state.user = user;
+    if (user && typeof user.can === "function") {
+      const w = await user.can("data.write");
+      if (w === false) state.canWrite = false;
+    }
+    render();
+    if (!db) return;
+    db.collection("results").onSnapshot(async (snap) => {
+      const m = {};
+      snap.docs.forEach((d) => { const v = d.data(); if (v) m[d.id] = v; });
+      state.results = m;
+      await resolveNames();
+      render();
+    }, () => {});
+  }
+  start();
+})();
+</script>

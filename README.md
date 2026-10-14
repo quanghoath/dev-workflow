@@ -18,6 +18,7 @@ P6 Report       verification + code review + REPORT.md + pull request     ◆ yo
 - **Quick mode** for small fixes: spec and plan in chat, still TDD and UI/API checks.
 - **AI explores, Playwright keeps:** UI scenarios that pass in Chrome are written as Playwright tests, so CI catches regressions.
 - **Pull request with evidence:** P6 opens a PR/MR whose description lists acceptance criteria, test numbers and fixed bugs.
+- **Acceptance test guide for BA/QA:** every finished feature gets a step-by-step guide page (what was done, how to prepare, each check with Pass / Fail). Testers mark results on the page; Claude turns failures into bugs. The spec ends with links to the report, the guide and the PR.
 - **Never lose your place:** status lives in `status.json` in your repo; `/dev-workflow:status` and a session-start reminder tell you what is waiting for you.
 - Optional live dashboard on claude.ai.
 
@@ -69,6 +70,7 @@ Changes apply to open sessions right away. To turn on auto-update, run `/plugin`
 | [04-testing-guide.md](plugins/dev-workflow/reference/04-testing-guide.md) | Step-by-step testing: unit, API, UI, Playwright, race, load, performance |
 | [01-project-profiles.md](plugins/dev-workflow/reference/01-project-profiles.md) | Test tools per stack and default thresholds |
 | [03-dashboard.md](plugins/dev-workflow/reference/03-dashboard.md) | Status data and how Claude updates the dashboard |
+| [05-acceptance-guide.md](plugins/dev-workflow/reference/05-acceptance-guide.md) | The test guide for BA/QA and how results come back |
 | [templates/](plugins/dev-workflow/templates/) | Spec addendum, TEST-PLAN, BUG, REPORT, PR body, config |
 
 Vietnamese versions: `reference/vi/`, `templates/vi/`, `examples/vi/`.

@@ -16,6 +16,7 @@ P6 Tổng kết     kiểm chứng + code review + REPORT.md + pull request     
 - **Chế độ nhanh** cho việc nhỏ: spec và plan ngay trong chat, vẫn TDD và kiểm tra UI/API.
 - Kịch bản UI đã pass được ghi thành **test Playwright**, CI chạy lại mãi.
 - P6 tự mở **PR/MR** kèm bằng chứng test.
+- **Hướng dẫn kiểm thử nghiệm thu cho BA/QA:** làm xong mỗi tính năng có một trang hướng dẫn từng bước (đã làm gì, chuẩn bị gì, từng bước kiểm tra kèm Đạt / Không đạt). Người test đánh dấu ngay trên trang; Claude biến các bước không đạt thành bug. Cuối spec có link tới báo cáo, hướng dẫn test và PR.
 - Trạng thái lưu trong repo (`status.json`); `/dev-workflow:status` và lời nhắc khi mở phiên mới cho biết việc gì đang chờ bạn.
 - Dashboard claude.ai (tuỳ chọn).
 
@@ -65,6 +66,7 @@ Cài xong là dùng được ngay trong các phiên đang mở. Muốn bật t�
 | [04-quy-trinh-test.md](plugins/dev-workflow/reference/vi/04-quy-trinh-test.md) | Test từng bước: unit, API, UI, Playwright, race, tải, hiệu năng |
 | [01-ho-so-du-an.md](plugins/dev-workflow/reference/vi/01-ho-so-du-an.md) | Công cụ test theo stack và ngưỡng mặc định |
 | [03-dashboard.md](plugins/dev-workflow/reference/vi/03-dashboard.md) | Dữ liệu trạng thái và cách Claude cập nhật dashboard |
+| [05-huong-dan-nghiem-thu.md](plugins/dev-workflow/reference/vi/05-huong-dan-nghiem-thu.md) | Hướng dẫn test cho BA/QA và cách kết quả quay lại |
 | [templates/vi/](plugins/dev-workflow/templates/vi/) | Mẫu spec, TEST-PLAN, BUG, REPORT, PR, config |
 
 ## Đóng góp

@@ -1,0 +1,36 @@
+{
+  "lang": "vi",
+  "project": "<project>",
+  "slug": "<slug>",
+  "title": "<tên tính năng>",
+  "round": 1,
+  "roundNote": "",
+  "whatWasDone": [
+    "<người dùng giờ làm được gì, viết bằng ngôn ngữ nghiệp vụ>"
+  ],
+  "environment": {
+    "url": "<link trang test, ví dụ https://staging.example.com/duong-dan>",
+    "accounts": ["<tên tài khoản test> (mật khẩu: <để ở đâu, không ghi mật khẩu>)"],
+    "data": "<dữ liệu phải có trước khi test>",
+    "notes": ["<trình duyệt, thiết bị, lưu ý khác>"]
+  },
+  "sections": [
+    {
+      "ac": "AC-1",
+      "title": "<tên ngắn của tiêu chí nghiệm thu>",
+      "steps": [
+        { "id": "1.1", "action": "<một thao tác, tên nút để trong ngoặc kép>", "expected": "<người test phải thấy gì>", "image": "" }
+      ]
+    }
+  ],
+  "edgeCases": [
+    { "id": "E1", "action": "<ví dụ bấm nút 2 lần thật nhanh>", "expected": "<kết quả mong đợi>" }
+  ],
+  "howToReport": [
+    "Bấm \"Không đạt\" ở bước đó và ghi lại những gì thấy vào ô ghi chú.",
+    "Ghi thêm tài khoản đã dùng và thời điểm.",
+    "Báo lập trình viên; Claude đọc các bước không đạt và ghi chú ngay trên trang này."
+  ],
+  "links": { "report": "docs/superpowers/runs/<slug>/REPORT.md", "spec": "<đường dẫn spec>", "pr": "<link PR>" },
+  "generatedAt": "<ISO 8601>"
+}

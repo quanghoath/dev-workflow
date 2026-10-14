@@ -33,6 +33,7 @@ fe_test_login: "tài khoản test ở .env.test"
 # --- P6: tạo PR/MR ---
 pr_tool: gh                    # gh (GitHub) | glab (GitLab) | none
 pr_base: main
+test_guide: claude             # hướng dẫn kiểm thử nghiệm thu cho BA/QA: claude (trang claude.ai) | repo (TEST-GUIDE.md) | none
 
 # --- P5 ---
 race_tool: k6                  # hoặc đường dẫn script song song sẵn có

@@ -33,6 +33,7 @@ fe_test_login: "test account in .env.test"
 # --- P6: create PR/MR ---
 pr_tool: gh                    # gh (GitHub) | glab (GitLab) | none
 pr_base: main
+test_guide: claude             # acceptance test guide for BA/QA: claude (page on claude.ai) | repo (TEST-GUIDE.md) | none
 
 # --- P5 ---
 race_tool: k6                  # or the path to an existing concurrency script

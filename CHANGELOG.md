@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.1.0 — 2026-10-14
+- **Acceptance test guide for BA/QA:** at the end of every feature Claude writes `runs/<slug>/test-guide.json` and publishes a claude.ai checklist page (what was done, setup, steps with Pass / Fail and notes). Testers with Contributor access record results; Claude reads them and opens a bug per failed step. `test_guide: claude | repo | none` in the config; `repo` writes `TEST-GUIDE.md` instead.
+- The spec ends with a **Results** section linking REPORT, the test guide and the PR. `guideUrl` and `gates.acceptance` added to `status.json`.
+- Dashboard shows the test guide link; `/dev-workflow:status` reports tester results.
+
 ## 2.0.0 — 2026-10-12
 - **English first:** reference docs, templates, skills and examples are now in English; Vietnamese versions live in `reference/vi/`, `templates/vi/`, `examples/vi/`, `README.vi.md`. Reference files renamed: `01-project-profiles.md`, `02-workflow.md`, `03-dashboard.md`, `04-testing-guide.md`.
 - **Playwright:** UI scenarios that pass via Chrome DevTools MCP are recorded as Playwright tests (`e2e_framework`, `e2e_dir`, `e2e_test` in the config).

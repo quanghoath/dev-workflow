@@ -1,0 +1,36 @@
+{
+  "lang": "en",
+  "project": "<project>",
+  "slug": "<slug>",
+  "title": "<feature name>",
+  "round": 1,
+  "roundNote": "",
+  "whatWasDone": [
+    "<what users can now do, in business language>"
+  ],
+  "environment": {
+    "url": "<test site URL, e.g. https://staging.example.com/path>",
+    "accounts": ["<test account name> (password: <where it is kept, never the password itself>)"],
+    "data": "<data that must exist before testing>",
+    "notes": ["<browser, device, anything else>"]
+  },
+  "sections": [
+    {
+      "ac": "AC-1",
+      "title": "<short name of the acceptance criterion>",
+      "steps": [
+        { "id": "1.1", "action": "<one action, with button labels in quotes>", "expected": "<what the tester must see>", "image": "" }
+      ]
+    }
+  ],
+  "edgeCases": [
+    { "id": "E1", "action": "<e.g. click the button twice quickly>", "expected": "<expected result>" }
+  ],
+  "howToReport": [
+    "Click \"Fail\" on the step and write what you saw in the note box.",
+    "Add the account you used and the time.",
+    "Tell the developer; Claude reads failed steps and notes from this page."
+  ],
+  "links": { "report": "docs/superpowers/runs/<slug>/REPORT.md", "spec": "<spec path>", "pr": "<PR URL>" },
+  "generatedAt": "<ISO 8601>"
+}

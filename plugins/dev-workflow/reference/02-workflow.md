@@ -13,7 +13,7 @@ Before P1, pick one of two modes and record it in `status.json` (`mode`):
 | Spec / plan | spec file + plan + TEST-PLAN | **in chat**: goal, 1–3 ACs, files to change, how to verify (one approval) |
 | Build | full P3 | TDD: reproducing/specifying test → fix → build + unit tests green |
 | Verification | P4 + P5 | P4 only, for the relevant ACs (FE: Chrome DevTools MCP; BE: call the API) |
-| Report | full REPORT.md ◆ | the "Quick report" section in `REPORT.md` |
+| Report | full REPORT.md + acceptance test guide ◆ | the "Quick report" section in `REPORT.md` + a short acceptance test guide |
 
 **One way only:** if quick mode uncovers hidden complexity (more files to change, touches schema/API, a race risk appears…), **stop, tell the user, and switch to full mode** from P1. Never switch back from full to quick.
 
@@ -93,6 +93,7 @@ Each feature has a file `docs/superpowers/runs/<slug>/status.json`, with the sam
   2. `pr_tool: gh` → `gh pr create --base <pr_base> --title "<title>" --body-file <file>`; `pr_tool: glab` → `glab mr create --target-branch <pr_base> --title "<title>" --description "$(cat <file>)"`.
   3. No CLI, or `pr_tool: none`: give the user the PR body (saved at `runs/<slug>/PR-BODY.md`) and a link to create the PR manually.
   4. Record the PR link in `status.json` (`prUrl`) and in REPORT.
+- **Acceptance test guide** for BA/QA (unless `test_guide: none`): write `runs/<slug>/test-guide.json`, publish the guide page or write `TEST-GUIDE.md`, record `guideUrl`, and append the **Results** section to the spec (links to REPORT, guide, PR). See [05-acceptance-guide.md](05-acceptance-guide.md).
 - **Exit when:** the reviewer reads REPORT and chooses how to merge/PR.
 - **Dashboard:** `status=done`, attach the REPORT summary (ACs passed, bug count, loop count, P5 metrics).
 

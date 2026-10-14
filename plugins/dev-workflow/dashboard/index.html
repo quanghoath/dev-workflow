@@ -171,7 +171,7 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
       tasks: "Tasks", openBugs: "Open bugs", rounds: "Rounds", none: "None yet.",
       blockedPrefix: "Blocked: ", report: "Report", bugs: "Bugs", round: (n) => `round ${n}/3`,
       approvals: "Approvals", notYet: "not yet", gates: ["Spec (P1)", "Plan (P2)", "Report (P6)"],
-      inRepo: "In the repo", log: "Log", pr: "Pull request",
+      inRepo: "In the repo", log: "Log", pr: "Pull request", guide: "Test guide (BA/QA)",
       quick: "quick", quickTitle: "Quick mode: spec and plan in chat, no P5",
       emptyTitle: "No features yet",
       emptyText: "When Claude starts P1 for a feature in any project using dev-workflow, it shows up here with its current step, tasks, test results and bugs.",
@@ -197,7 +197,7 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
       tasks: "Task", openBugs: "Bug mở", rounds: "Vòng", none: "Chưa có.",
       blockedPrefix: "Bị chặn: ", report: "Tổng kết", bugs: "Bug", round: (n) => `vòng ${n}/3`,
       approvals: "Duyệt", notYet: "chưa", gates: ["Spec (P1)", "Plan (P2)", "Tổng kết (P6)"],
-      inRepo: "Trong repo", log: "Nhật ký", pr: "Pull request",
+      inRepo: "Trong repo", log: "Nhật ký", pr: "Pull request", guide: "Hướng dẫn test (BA/QA)",
       quick: "nhanh", quickTitle: "Chế độ nhanh: spec/plan trong chat, bỏ P5",
       emptyTitle: "Chưa có tính năng nào",
       emptyText: "Khi Claude bắt đầu P1 cho một tính năng ở bất kỳ dự án nào theo dev-workflow, tính năng đó sẽ hiện ở đây với bước hiện tại, task, kết quả test và bug.",
@@ -329,7 +329,8 @@ h1 { font: 700 clamp(26px, 4vw, 34px)/1.1 var(--font-display); margin: 0; letter
     parts.push(`<div class="block"><h3 class="label">${T.approvals}</h3><ul class="items">${gate("spec", T.gates[0])}${gate("plan", T.gates[1])}${gate("report", T.gates[2])}</ul></div>`);
     const paths = [["Branch", f.branch], ["Spec", f.specPath], ["Plan", f.planPath]].filter((p) => p[1]);
     const pr = safeUrl(f.prUrl);
-    if (paths.length || pr) parts.push(`<div class="block"><h3 class="label">${T.inRepo}</h3><div class="paths">${paths.map(([k, v]) => `<div><span class="label">${k}</span> <span class="mono">${esc(v)}</span></div>`).join("")}${pr ? `<div><span class="label">${T.pr}</span> <a class="mono" href="${esc(pr)}" target="_blank" rel="noopener">${esc(pr)}</a></div>` : ""}</div></div>`);
+    const guide = safeUrl(f.guideUrl);
+    if (paths.length || pr || guide) parts.push(`<div class="block"><h3 class="label">${T.inRepo}</h3><div class="paths">${paths.map(([k, v]) => `<div><span class="label">${k}</span> <span class="mono">${esc(v)}</span></div>`).join("")}${pr ? `<div><span class="label">${T.pr}</span> <a class="mono" href="${esc(pr)}" target="_blank" rel="noopener">${esc(pr)}</a></div>` : ""}${guide ? `<div><span class="label">${T.guide}</span> <a class="mono" href="${esc(guide)}" target="_blank" rel="noopener">${esc(guide)}</a></div>` : ""}</div></div>`);
     const log = arr(f.log).slice().sort((a, b) => (Date.parse(b.at) || 0) - (Date.parse(a.at) || 0)).slice(0, 20);
     parts.push(`<div class="block"><h3 class="label">${T.log}</h3>${log.length ? `<ul class="items log">${log.map((e) =>
       `<li><span class="mono">${esc(stamp(e.at))}</span><span class="tag">${esc(e.phase)}</span><span class="t">${esc(e.text)}</span></li>`).join("")}</ul>` : `<p class="note">${T.none}</p>`}</div>`);
