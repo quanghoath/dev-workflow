@@ -13,6 +13,13 @@ Templates are in `${CLAUDE_PLUGIN_ROOT}/templates/`; when the user writes in Vie
 
 ## Steps
 
+**Upgrade mode.** If `docs/workflow-config.md` already exists, the repo was set up by an older version. Do not recreate it and do not ask questions already answered there. Instead:
+- Compare it with the current `workflow-config.md` template and **add only the missing keys** (e.g. `test_guide`, `e2e_framework`, `e2e_dir`, `e2e_test`, `pr_tool`, `pr_base`), filling them by running steps 4–5 for those keys only. Keep every existing value, comment and the project notes.
+- Replace the dev-workflow section of `CLAUDE.md` with the current `CLAUDE.snippet.md` (only that section).
+- Run step 7 (`.claude/settings.json`) if it is missing or lacks the plugin keys.
+- Keep `dashboard_url` and skip step 8 unless it is empty.
+- Report what was added, then ask before committing.
+
 Create one todo per step.
 
 1. **Read the repo:** `CLAUDE.md`, `README`, manifests (`package.json`, `*.csproj`, `go.mod`, `pyproject.toml`…), existing test folders, `.mcp.json`.

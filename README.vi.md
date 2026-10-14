@@ -47,7 +47,7 @@ Cài xong là dùng được ngay trong các phiên đang mở. Muốn bật t�
 
 ## Sử dụng
 
-1. Mở repo dự án, gõ `/dev-workflow:init`. Claude nhận diện FE/BE/fullstack, chạy thử lệnh build/test, hỏi có thêm Playwright và dùng dashboard không.
+1. Mở repo dự án, gõ `/dev-workflow:init`. Claude nhận diện FE/BE/fullstack, chạy thử lệnh build/test, hỏi có thêm Playwright và dùng dashboard không. Repo đã init bằng bản cũ thì chạy lại lệnh này: Claude chỉ bổ sung phần còn thiếu, giữ nguyên cấu hình cũ.
 2. Commit các file Claude tạo. Dev khác clone repo, bấm **Trust** là có plugin.
 3. Làm tính năng: *"làm tính năng X theo dev-workflow"* hoặc `/dev-workflow:run <mô tả>`. Việc nhỏ thì Claude đề xuất chế độ nhanh.
 4. Xem tiến độ, tiếp tục việc dở: `/dev-workflow:status`.

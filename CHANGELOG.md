@@ -1,5 +1,8 @@
 # Changelog
 
+## 2.1.3 — 2026-10-14
+- `/dev-workflow:init` on an already initialized repo runs in **upgrade mode**: adds only missing config keys, refreshes the CLAUDE.md section, adds `.claude/settings.json`, keeps every existing value.
+
 ## 2.1.2 — 2026-10-14
 - Dashboard: every feature row shows **Open test guide** and **Open pull request** buttons, plus BA/QA results (`tests.acceptance`), without expanding the row.
 

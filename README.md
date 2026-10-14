@@ -51,7 +51,7 @@ Changes apply to open sessions right away. To turn on auto-update, run `/plugin`
 
 ## Use
 
-1. In your project, run `/dev-workflow:init`. Claude detects FE/BE/full-stack, verifies build/test commands, offers Playwright, and asks about the dashboard.
+1. In your project, run `/dev-workflow:init`. Claude detects FE/BE/full-stack, verifies build/test commands, offers Playwright, and asks about the dashboard. On a repo set up by an older version, running it again only adds what is missing.
 2. Commit the files it creates. Teammates who clone the repo and trust the folder get the plugin automatically.
 3. Build: *"build X with dev-workflow"* or `/dev-workflow:run <description>`. For small fixes Claude offers quick mode.
 4. See progress or resume in a new session: `/dev-workflow:status`.
