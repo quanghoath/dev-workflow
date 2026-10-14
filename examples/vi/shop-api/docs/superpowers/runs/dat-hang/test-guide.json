@@ -1,0 +1,95 @@
+{
+  "lang": "vi",
+  "project": "shop-api",
+  "slug": "dat-hang",
+  "title": "Đặt hàng và trừ tồn kho",
+  "round": 1,
+  "roundNote": "",
+  "whatWasDone": [
+    "Khách đã đăng nhập có thể đặt hàng từ giỏ hàng.",
+    "Tồn kho giảm đúng số lượng ngay khi đặt hàng thành công.",
+    "Sản phẩm hết hàng thì đơn bị từ chối và khách biết món nào hết.",
+    "Bấm \"Đặt hàng\" 2 lần thật nhanh chỉ tạo 1 đơn.",
+    "Khách không xem được đơn hàng của người khác."
+  ],
+  "environment": {
+    "url": "https://staging.shop.example.com/cart",
+    "accounts": [
+      "customer-a@test.example (mật khẩu trong kho mật khẩu của team)",
+      "customer-b@test.example"
+    ],
+    "data": "Sản phẩm \"Máy xay giới hạn\" còn 1 cái. Nếu thấy còn 0, nhờ lập trình viên reset dữ liệu test.",
+    "notes": [
+      "Dùng Chrome hoặc Edge trên máy tính.",
+      "Mỗi lần test sẽ tạo đơn hàng test thật trên staging, không sao."
+    ]
+  },
+  "sections": [
+    {
+      "ac": "AC-1",
+      "title": "Đặt hàng",
+      "steps": [
+        {
+          "id": "1.1",
+          "action": "Đăng nhập bằng khách A, thêm \"Cà phê hạt\" và \"Cốc sứ\" vào giỏ, rồi mở giỏ hàng.",
+          "expected": "Giỏ có đủ 2 sản phẩm, giá từng món và tổng tiền."
+        },
+        {
+          "id": "1.2",
+          "action": "Bấm \"Đặt hàng\".",
+          "expected": "Trang hiện \"Đặt hàng thành công\" kèm mã đơn."
+        },
+        {
+          "id": "1.3",
+          "action": "Mở lại trang sản phẩm \"Cốc sứ\".",
+          "expected": "Tồn kho giảm 1 so với trước khi đặt."
+        }
+      ]
+    },
+    {
+      "ac": "AC-2",
+      "title": "Giỏ hàng trống",
+      "steps": [
+        {
+          "id": "2.1",
+          "action": "Xoá hết sản phẩm trong giỏ.",
+          "expected": "Nút \"Đặt hàng\" bị khoá và trang báo \"Giỏ hàng trống\"."
+        }
+      ]
+    },
+    {
+      "ac": "AC-3",
+      "title": "Hết hàng",
+      "steps": [
+        {
+          "id": "3.1",
+          "action": "Thêm 2 × \"Máy xay giới hạn\" vào giỏ rồi bấm \"Đặt hàng\".",
+          "expected": "Đơn bị từ chối với thông báo \"Máy xay giới hạn đã hết hàng\". Không có mã đơn."
+        }
+      ]
+    }
+  ],
+  "edgeCases": [
+    {
+      "id": "E1",
+      "action": "Bấm \"Đặt hàng\" 2 lần thật nhanh.",
+      "expected": "Chỉ hiện 1 mã đơn, và \"Đơn của tôi\" chỉ có thêm 1 đơn."
+    },
+    {
+      "id": "E2",
+      "action": "Đăng nhập bằng khách B, dán địa chỉ trang đơn hàng của khách A (từ bước 1.2).",
+      "expected": "\"Không tìm thấy đơn hàng\". Không bao giờ hiện chi tiết đơn của khách A."
+    }
+  ],
+  "howToReport": [
+    "Bấm \"Không đạt\" ở bước đó và ghi lại những gì thấy vào ô ghi chú.",
+    "Ghi thêm tài khoản đã dùng và thời điểm; có link ảnh chụp màn hình càng tốt.",
+    "Báo lập trình viên. Claude đọc các bước không đạt và ghi chú ngay trên trang này rồi mở bug cho từng bước."
+  ],
+  "links": {
+    "report": "docs/superpowers/runs/dat-hang/REPORT.md",
+    "spec": "docs/superpowers/specs/2026-10-12-dat-hang-design.md",
+    "pr": ""
+  },
+  "generatedAt": "2026-10-12T15:40:00+07:00"
+}

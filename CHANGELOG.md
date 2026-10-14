@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.1.1 — 2026-10-14
+- Test guide page and dashboard open in **Vietnamese by default** with a VI / EN switch (remembered per viewer). A guide can hold both languages: `{"vi": …, "en": …}`.
+- Vietnamese example guide: `examples/vi/…/dat-hang/test-guide.json`.
+
 ## 2.1.0 — 2026-10-14
 - **Acceptance test guide for BA/QA:** at the end of every feature Claude writes `runs/<slug>/test-guide.json` and publishes a claude.ai checklist page (what was done, setup, steps with Pass / Fail and notes). Testers with Contributor access record results; Claude reads them and opens a bug per failed step. `test_guide: claude | repo | none` in the config; `repo` writes `TEST-GUIDE.md` instead.
 - The spec ends with a **Results** section linking REPORT, the test guide and the PR. `guideUrl` and `gates.acceptance` added to `status.json`.

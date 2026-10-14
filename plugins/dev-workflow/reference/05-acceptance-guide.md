@@ -18,7 +18,7 @@ If `claude` is set but the `Artifact` tool is not available (not signed in to cl
 
 Always write this file (template `test-guide.json`, or `templates/vi/test-guide.json` for Vietnamese). It is the source for both the page and the Markdown version. Fields:
 
-- `lang` — `en` or `vi`; the page labels follow it. Use the user's language.
+- `lang` — `en` or `vi`. Write the guide in the user's language. The page opens in Vietnamese by default and has a VI / EN switch for its labels; to offer both languages of content too, write `{"vi": {…guide…}, "en": {…guide…}}` with the same step ids.
 - `project`, `slug`, `title`
 - `round` — starts at 1; increase it every time the guide is republished after fixes. Results from older rounds are ignored by the page. `roundNote` says what changed (e.g. "after fixing BUG-002").
 - `whatWasDone` — 3–6 bullets in business language. No class names, endpoints or SQL.

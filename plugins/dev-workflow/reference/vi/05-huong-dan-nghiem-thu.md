@@ -18,7 +18,7 @@ Cuối mỗi tính năng (P6 ở chế độ đầy đủ, bước báo cáo ở
 
 Luôn ghi file này (mẫu `test-guide.json`, hoặc `templates/vi/test-guide.json` cho tiếng Việt). Đây là nguồn cho cả trang lẫn bản markdown. Các trường:
 
-- `lang` — `en` hoặc `vi`; nhãn trên trang theo trường này. Dùng ngôn ngữ của người dùng.
+- `lang` — `en` hoặc `vi`. Viết hướng dẫn bằng ngôn ngữ của người dùng. Trang mặc định mở tiếng Việt và có nút VI / EN để đổi nhãn; muốn có cả nội dung hai thứ tiếng thì ghi `{"vi": {…hướng dẫn…}, "en": {…hướng dẫn…}}` với cùng id bước.
 - `project`, `slug`, `title`
 - `round` — bắt đầu từ 1; tăng mỗi lần publish lại sau khi sửa lỗi. Trang bỏ qua kết quả của các lần trước. `roundNote` ghi thay đổi gì (ví dụ "sau khi sửa BUG-002").
 - `whatWasDone` — 3–6 gạch đầu dòng bằng ngôn ngữ nghiệp vụ. Không tên class, endpoint hay SQL.
